@@ -1,4 +1,4 @@
-package training.system.factory;
+package training.system.core.factory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

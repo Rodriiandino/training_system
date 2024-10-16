@@ -1,4 +1,4 @@
-package training.system.user;
+package training.system.core.domain.user;
 
 import java.util.Objects;
 

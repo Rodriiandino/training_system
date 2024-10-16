@@ -6,4 +6,6 @@ module training.system {
 
     opens training.system to javafx.fxml;
     exports training.system;
+    exports training.system.core.domain.routine;
+    opens training.system.core.domain.routine to javafx.fxml;
 }

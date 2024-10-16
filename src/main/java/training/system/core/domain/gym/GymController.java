@@ -1,0 +1,4 @@
+package training.system.core.domain.gym;
+
+public class GymController {
+}

@@ -1,6 +1,6 @@
-package training.system.gym;
+package training.system.core.domain.gym;
 
-import training.system.user.User;
+import training.system.core.domain.user.User;
 
 import java.util.List;
 
