@@ -2,21 +2,20 @@ package training.system.core.domain.user;
 
 import training.system.core.domain.gym.Gym;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 public class User extends Person {
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
     private Gym gymTraining;
-    private List<Gym> gymTrainer;
+    private Set<Gym> gymTrainer = new HashSet<>();
     private Gym gymManager;
-    private List<User> clients;
-    private List<User> trainers;
+    private Set<User> clients = new HashSet<>();
+    private Set<User> trainers = new HashSet<>();
 
     public User(String name, String lastName, String email, String password) {
         super(name, lastName, email, password);
-        Role role = new Role(RoleEnum.ROLE_USER);
-        this.roles = Set.of(role);
+        this.roles.add(new Role(RoleEnum.ROLE_USER));
     }
 
     public User(int id, String name, String lastName, String email, String password, Set<Role> roles) {
@@ -24,14 +23,14 @@ public class User extends Person {
         this.roles = roles;
     }
 
-    public User(int id, String name, String lastName, String email, String password, Set<Role> roles, Gym gymTraining, List<User> trainers) {
+    public User(int id, String name, String lastName, String email, String password, Set<Role> roles, Gym gymTraining, Set<User> trainers) {
         super(id, name, lastName, email, password);
         this.roles = roles;
         this.gymTraining = gymTraining;
         this.trainers = trainers;
     }
 
-    public User(int id, String name, String lastName, String email, String password, Set<Role> roles, List<Gym> gymTrainer, List<User> clients) {
+    public User(int id, String name, String lastName, String email, String password, Set<Role> roles, Set<Gym> gymTrainer, Set<User> clients) {
         super(id, name, lastName, email, password);
         this.roles = roles;
         this.gymTrainer = gymTrainer;
@@ -76,14 +75,14 @@ public class User extends Person {
         this.gymTraining = gymTraining;
     }
 
-    public List<Gym> getGymTrainer() {
+    public Set<Gym> getGymTrainer() {
         if (isTrainer()) {
             return gymTrainer;
         }
         throw new IllegalStateException("El usuario no es entrenador.");
     }
 
-    public void setGymTrainer(List<Gym> gymTrainer) {
+    public void setGymTrainer(Set<Gym> gymTrainer) {
         if (isTrainer()) {
             this.gymTrainer = gymTrainer;
         } else {
@@ -106,14 +105,14 @@ public class User extends Person {
         }
     }
 
-    public List<User> getClients() {
+    public Set<User> getClients() {
         if (isTrainer()) {
             return clients;
         }
         throw new IllegalStateException("El usuario no es entrenador.");
     }
 
-    public void setClients(List<User> clients) {
+    public void setClients(Set<User> clients) {
         if (isTrainer()) {
             this.clients = clients;
         } else {
@@ -121,14 +120,11 @@ public class User extends Person {
         }
     }
 
-    public List<User> getTrainers() {
-        if (isAdministrator()) {
-            return trainers;
-        }
-        throw new IllegalStateException("El usuario no es administrador.");
+    public Set<User> getTrainers() {
+        return trainers;
     }
 
-    public void setTrainers(List<User> trainers) {
+    public void setTrainers(Set<User> trainers) {
         if (isAdministrator()) {
             this.trainers = trainers;
         } else {
@@ -148,19 +144,19 @@ public class User extends Person {
             output.append(", gymTraining=").append(getGymTraining());
         }
 
-        if (getGymTrainer() != null) {
+        if (isTrainer() && !getGymTrainer().isEmpty()) {
             output.append(", gymTrainer=").append(getGymTrainer());
         }
 
-        if (getGymManager() != null) {
+        if (isAdministrator() && getGymManager() != null) {
             output.append(", gymManager=").append(getGymManager());
         }
 
-        if (getClients() != null) {
+        if (isTrainer() && !getClients().isEmpty()) {
             output.append(", clients=").append(getClients());
         }
 
-        if (getTrainers() != null) {
+        if (!getTrainers().isEmpty()) {
             output.append(", trainers=").append(getTrainers());
         }
 

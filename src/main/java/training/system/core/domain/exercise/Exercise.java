@@ -120,4 +120,18 @@ public class Exercise {
     public User getTrainer() {
         return trainer;
     }
+
+    @Override
+    public String toString() {
+        return "Exercise{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", explanation='" + explanation + '\'' +
+                ", videoUrl='" + videoUrl + '\'' +
+                ", isPredefined='" + isPredefined + '\'' +
+                ", user=" + user +
+                ", trainer=" + trainer +
+                '}';
+    }
 }

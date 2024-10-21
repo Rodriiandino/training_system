@@ -14,7 +14,6 @@ public class Note {
     private User user;
     private User trainer;
 
-
     public Note(String title, String content, String purpose, Date noteDate, User user) {
         this.title = title;
         this.content = content;
@@ -92,8 +91,20 @@ public class Note {
         return user;
     }
 
-
     public User getTrainer() {
         return trainer;
+    }
+
+    @Override
+    public String toString() {
+        return "Note{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", purpose='" + purpose + '\'' +
+                ", noteDate=" + noteDate +
+                ", user=" + user +
+                ", trainer=" + trainer +
+                '}';
     }
 }

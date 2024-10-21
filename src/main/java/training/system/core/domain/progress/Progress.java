@@ -106,4 +106,18 @@ public class Progress {
     public void setExercise(Exercise exercise) {
         this.exercise = exercise;
     }
+
+    @Override
+    public String toString() {
+        return "Progress{" +
+                "id=" + id +
+                ", progressDate=" + progressDate +
+                ", repetitions=" + repetitions +
+                ", weight=" + weight +
+                ", time=" + time +
+                ", user=" + user +
+                ", trainer=" + trainer +
+                ", exercise=" + exercise +
+                '}';
+    }
 }

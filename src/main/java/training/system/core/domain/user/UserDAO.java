@@ -1,4 +1,4 @@
 package training.system.core.domain.user;
 
-public class CategoryController {
+public class UserDAO {
 }

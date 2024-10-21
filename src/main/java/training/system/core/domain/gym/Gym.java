@@ -2,33 +2,29 @@ package training.system.core.domain.gym;
 
 import training.system.core.domain.user.User;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Gym {
     private int id;
     private String name;
     private String address;
-    private List<User> clients;
-    private List<User> trainers;
-    private List<User> managers;
+    private Set<User> clients = new HashSet<>();
+    private Set<User> trainers = new HashSet<>();
+    private Set<User> managers = new HashSet<>();
 
     public Gym(String name, String address) {
         this.name = name;
         this.address = address;
     }
 
-    public Gym(int id, String name, String address, List<User> clients, List<User> trainers, List<User> managers) {
+    public Gym(int id, String name, String address, Set<User> clients, Set<User> trainers, Set<User> managers) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.clients = clients;
         this.trainers = trainers;
         this.managers = managers;
-    }
-
-    @Override
-    public String toString() {
-        return "Gym{" + "id=" + id + ", name='" + name + '\'' + ", address='" + address + '\'' + ", clients=" + clients + ", trainers=" + trainers + ", managers=" + managers + '}';
     }
 
     public int getId() {
@@ -51,27 +47,75 @@ public class Gym {
         this.address = address;
     }
 
-    public List<User> getClients() {
+    public Set<User> getClients() {
         return clients;
     }
 
-    public void setClients(List<User> clients) {
-        this.clients = clients;
-    }
-
-    public List<User> getTrainers() {
+    public Set<User> getTrainers() {
         return trainers;
     }
 
-    public void setTrainers(List<User> trainers) {
-        this.trainers = trainers;
-    }
-
-    public List<User> getManagers() {
+    public Set<User> getManagers() {
         return managers;
     }
 
-    public void setManagers(List<User> managers) {
-        this.managers = managers;
+    public void addClient(User client) {
+        this.clients.add(client);
+    }
+
+    public void addClients(Set<User> clients) {
+        this.clients.addAll(clients);
+    }
+
+    public void addTrainer(User trainer) {
+        this.trainers.add(trainer);
+    }
+
+    public void addTrainers(Set<User> trainers) {
+        this.trainers.addAll(trainers);
+    }
+
+    public void addManager(User manager) {
+        this.managers.add(manager);
+    }
+
+    public void addManagers(Set<User> managers) {
+        this.managers.addAll(managers);
+    }
+
+    public void removeClient(User client) {
+        this.clients.remove(client);
+    }
+
+    public void removeClients(Set<User> clients) {
+        this.clients.removeAll(clients);
+    }
+
+    public void removeTrainer(User trainer) {
+        this.trainers.remove(trainer);
+    }
+
+    public void removeTrainers(Set<User> trainers) {
+        this.trainers.removeAll(trainers);
+    }
+
+    public void removeManager(User manager) {
+        this.managers.remove(manager);
+    }
+
+    public void removeManagers(Set<User> managers) {
+        this.managers.removeAll(managers);
+    }
+
+    @Override
+    public String toString() {
+        return "Gym{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", clients=" + clients +
+                ", trainers=" + trainers +
+                ", managers=" + managers +
+                '}';
     }
 }
