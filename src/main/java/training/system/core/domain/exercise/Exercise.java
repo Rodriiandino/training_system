@@ -8,11 +8,11 @@ public class Exercise {
     private String description;
     private String explanation;
     private String videoUrl;
-    private String isPredefined;
+    private boolean isPredefined;
     private User user;
     private User trainer;
 
-    public Exercise(String name, String description, String explanation, String videoUrl, String isPredefined) {
+    public Exercise(String name, String description, String explanation, String videoUrl, boolean isPredefined) {
         this.name = name;
         this.description = description;
         this.explanation = explanation;
@@ -20,7 +20,7 @@ public class Exercise {
         this.isPredefined = isPredefined;
     }
 
-    public Exercise(String name, String description, String explanation, String videoUrl, String isPredefined, User user) {
+    public Exercise(String name, String description, String explanation, String videoUrl, boolean isPredefined, User user) {
         this.name = name;
         this.description = description;
         this.explanation = explanation;
@@ -29,7 +29,7 @@ public class Exercise {
         this.user = user;
     }
 
-    public Exercise(String name, String description, String explanation, String videoUrl, String isPredefined, User user, User trainer) {
+    public Exercise(String name, String description, String explanation, String videoUrl, boolean isPredefined, User user, User trainer) {
         this.name = name;
         this.description = description;
         this.explanation = explanation;
@@ -39,7 +39,7 @@ public class Exercise {
         this.trainer = trainer;
     }
 
-    public Exercise(int id, String name, String description, String explanation, String videoUrl, String isPredefined) {
+    public Exercise(int id, String name, String description, String explanation, String videoUrl, boolean isPredefined) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -48,7 +48,7 @@ public class Exercise {
         this.isPredefined = isPredefined;
     }
 
-    public Exercise(int id, String name, String description, String explanation, String videoUrl, String isPredefined, User user) {
+    public Exercise(int id, String name, String description, String explanation, String videoUrl, boolean isPredefined, User user) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -58,7 +58,7 @@ public class Exercise {
         this.user = user;
     }
 
-    public Exercise(int id, String name, String description, String explanation, String videoUrl, String isPredefined, User user, User trainer) {
+    public Exercise(int id, String name, String description, String explanation, String videoUrl, boolean isPredefined, User user, User trainer) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -105,12 +105,12 @@ public class Exercise {
         this.videoUrl = videoUrl;
     }
 
-    public String getIsPredefined() {
+    public boolean getIsPredefined() {
         return isPredefined;
     }
 
-    public void setIsPredefined(String isPredefined) {
-        this.isPredefined = isPredefined;
+    public void setIsPredefined() {
+        this.isPredefined = !isPredefined;
     }
 
     public User getUser() {

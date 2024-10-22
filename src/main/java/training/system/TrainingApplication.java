@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import training.system.console.Menu;
 
 import java.io.IOException;
 
@@ -18,6 +19,7 @@ public class TrainingApplication extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        Menu menu = new Menu();
+        menu.start();
     }
 }

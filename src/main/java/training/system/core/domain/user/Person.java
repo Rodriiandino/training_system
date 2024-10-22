@@ -52,7 +52,11 @@ public abstract class Person {
         this.email = email;
     }
 
-    public void setpassword(String password) {
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
         this.password = password;
     }
 

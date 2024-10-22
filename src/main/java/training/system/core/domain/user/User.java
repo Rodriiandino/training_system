@@ -82,9 +82,17 @@ public class User extends Person {
         throw new IllegalStateException("El usuario no es entrenador.");
     }
 
-    public void setGymTrainer(Set<Gym> gymTrainer) {
+    public void addGymTrainer(Gym gymTrainer) {
         if (isTrainer()) {
-            this.gymTrainer = gymTrainer;
+            this.gymTrainer.add(gymTrainer);
+        } else {
+            throw new IllegalStateException("El usuario no es entrenador.");
+        }
+    }
+
+    public void removeGymTrainer(Gym gymTrainer) {
+        if (isTrainer()) {
+            this.gymTrainer.remove(gymTrainer);
         } else {
             throw new IllegalStateException("El usuario no es entrenador.");
         }
@@ -112,9 +120,33 @@ public class User extends Person {
         throw new IllegalStateException("El usuario no es entrenador.");
     }
 
-    public void setClients(Set<User> clients) {
+    public void addClient(User client) {
         if (isTrainer()) {
-            this.clients = clients;
+            this.clients.add(client);
+        } else {
+            throw new IllegalStateException("El usuario no es entrenador.");
+        }
+    }
+
+    public void addClients(Set<User> clients) {
+        if (isTrainer()) {
+            this.clients.addAll(clients);
+        } else {
+            throw new IllegalStateException("El usuario no es entrenador.");
+        }
+    }
+
+    public void removeClient(User client) {
+        if (isTrainer()) {
+            this.clients.remove(client);
+        } else {
+            throw new IllegalStateException("El usuario no es entrenador.");
+        }
+    }
+
+    public void removeClients(Set<User> clients) {
+        if (isTrainer()) {
+            this.clients.removeAll(clients);
         } else {
             throw new IllegalStateException("El usuario no es entrenador.");
         }
@@ -124,12 +156,20 @@ public class User extends Person {
         return trainers;
     }
 
-    public void setTrainers(Set<User> trainers) {
-        if (isAdministrator()) {
-            this.trainers = trainers;
-        } else {
-            throw new IllegalStateException("El usuario no es administrador.");
-        }
+    public void addTrainer(User trainer) {
+        this.trainers.add(trainer);
+    }
+
+    public void addTrainers(Set<User> trainers) {
+        this.trainers.addAll(trainers);
+    }
+
+    public void removeTrainer(User trainer) {
+        this.trainers.remove(trainer);
+    }
+
+    public void removeTrainers(Set<User> trainers) {
+        this.trainers.removeAll(trainers);
     }
 
     @Override
