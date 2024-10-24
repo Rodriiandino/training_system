@@ -11,11 +11,12 @@ public class Gym {
     private String address;
     private Set<User> clients = new HashSet<>();
     private Set<User> trainers = new HashSet<>();
-    private Set<User> managers = new HashSet<>();
+    private Set<User> managers;
 
-    public Gym(String name, String address) {
+    public Gym(String name, String address, Set<User> managers) {
         this.name = name;
         this.address = address;
+        this.managers = managers;
     }
 
     public Gym(int id, String name, String address, Set<User> clients, Set<User> trainers, Set<User> managers) {
@@ -109,13 +110,27 @@ public class Gym {
 
     @Override
     public String toString() {
-        return "Gym{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", clients=" + clients +
-                ", trainers=" + trainers +
-                ", managers=" + managers +
-                '}';
+        StringBuilder output = new StringBuilder("Gym{");
+        output.append("id=").append(id);
+        output.append(", name='").append(name).append('\'');
+        output.append(", address='").append(address).append('\'');
+        if (!clients.isEmpty()) {
+            output.append(", clients=[");
+            clients.forEach(client -> output.append(client.getName()).append(", "));
+            output.setLength(output.length() - 2);
+            output.append("]");
+        }
+        if (!trainers.isEmpty()) {
+            output.append(", trainers=[");
+            trainers.forEach(trainer -> output.append(trainer.getName()).append(", "));
+            output.setLength(output.length() - 2);
+            output.append("]");
+        }
+        output.append(", managers=[");
+        managers.forEach(manager -> output.append(manager.getName()).append(", "));
+        output.setLength(output.length() - 2);
+        output.append("]");
+        output.append('}');
+        return output.toString();
     }
 }

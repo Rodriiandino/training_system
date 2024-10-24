@@ -181,23 +181,32 @@ public class User extends Person {
         output.append(", email='").append(getEmail()).append('\'');
         output.append(", roles=").append(roles);
         if (getGymTraining() != null) {
-            output.append(", gymTraining=").append(getGymTraining());
+            output.append(", gymTrainingName='").append(getGymTraining().getName()).append('\'');
         }
 
         if (isTrainer() && !getGymTrainer().isEmpty()) {
-            output.append(", gymTrainer=").append(getGymTrainer());
+            output.append(", gymTrainerNames=[");
+            getGymTrainer().forEach(gym -> output.append(gym.getName()).append(", "));
+            output.setLength(output.length() - 2);
+            output.append(']');
         }
 
         if (isAdministrator() && getGymManager() != null) {
-            output.append(", gymManager=").append(getGymManager());
+            output.append(", gymManagerName='").append(getGymManager().getName()).append('\'');
         }
 
         if (isTrainer() && !getClients().isEmpty()) {
-            output.append(", clients=").append(getClients());
+            output.append(", clientNames=[");
+            getClients().forEach(client -> output.append(client.getName()).append(", "));
+            output.setLength(output.length() - 2);
+            output.append(']');
         }
 
         if (!getTrainers().isEmpty()) {
-            output.append(", trainers=").append(getTrainers());
+            output.append(", trainerNames=[");
+            getTrainers().forEach(trainer -> output.append(trainer.getName()).append(", "));
+            output.setLength(output.length() - 2);
+            output.append(']');
         }
 
         output.append('}');

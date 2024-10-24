@@ -8,9 +8,7 @@ import training.system.core.domain.user.Role;
 import training.system.core.domain.user.RoleEnum;
 import training.system.core.domain.user.User;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Menu {
     private Scanner scanner = new Scanner(System.in);
@@ -284,7 +282,8 @@ public class Menu {
                         System.out.println("No tenés un gimnasio asignado.");
                         break;
                     }
-                    userAuth.getGymManager().toString();
+                    System.out.println(userAuth.getGymManager().toString());
+                    break;
                 case 7:
                     System.out.println("Saliendo...");
                     break;
@@ -306,7 +305,9 @@ public class Menu {
             System.out.print("Ingrese la dirección: ");
             String address = scanner.nextLine();
 
-            Gym gym = new Gym(name, address);
+            Set<User> managers = new HashSet<>();
+            managers.add(userAuth);
+            Gym gym = new Gym(name, address, managers);
             gyms.add(gym);
             userAuth.setGymManager(gym);
             System.out.println("Gimnasio creado exitosamente.");
@@ -318,6 +319,10 @@ public class Menu {
     private void addTrainerToGym() {
         if (!userAuth.isAdministrator()) {
             System.out.println("No tienes permisos para añadir un entrenador a un gimnasio.");
+            return;
+        }
+        if (userAuth.getGymManager() == null) {
+            System.out.println("No tenés un gimnasio asignado.");
             return;
         }
         Gym gym = userAuth.getGymManager();
@@ -337,8 +342,12 @@ public class Menu {
     }
 
     private void addClientToGym() {
-        if (!userAuth.isTrainer()) {
+        if (!userAuth.isAdministrator()) {
             System.out.println("No tienes permisos para añadir un cliente a un gimnasio.");
+            return;
+        }
+        if (userAuth.getGymManager() == null) {
+            System.out.println("No tenés un gimnasio asignado.");
             return;
         }
         Gym gym = userAuth.getGymManager();
@@ -351,6 +360,7 @@ public class Menu {
                 return;
             }
             gym.addClient(client);
+            client.setGymTraining(gym);
             System.out.println("Cliente añadido al gimnasio exitosamente.");
         } catch (Exception e) {
             System.out.println("Error añadiendo cliente al gimnasio: " + e.getMessage());
@@ -358,8 +368,12 @@ public class Menu {
     }
 
     private void linkTrainerWithClient() {
-        if (!userAuth.isTrainer()) {
+        if (!userAuth.isAdministrator()) {
             System.out.println("No tienes permisos para vincular un entrenador con un cliente.");
+            return;
+        }
+        if (userAuth.getGymManager() == null) {
+            System.out.println("No tenés un gimnasio asignado.");
             return;
         }
         Gym gym = userAuth.getGymManager();
@@ -386,6 +400,37 @@ public class Menu {
     }
 
     private void panelExercise() {
+        int option;
+        do {
+            System.out.println("\n--- Panel de Ejercicios ---");
+            System.out.println("1. Crear ejercicio");
+            System.out.println("2. Ver ejercicios");
+            System.out.println("3. Salir");
+            System.out.print("Ingrese su opción: ");
+            option = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (option) {
+                case 1:
+                    createExercise();
+                    break;
+                case 2:
+                    if (exercises.isEmpty()) {
+                        System.out.println("No hay ejercicios registrados.");
+                    } else {
+                        System.out.println("\n--- Ejercicios registrados ---");
+                        for (Exercise exercise : exercises) {
+                            System.out.println(exercise.toString());
+                        }
+                    }
+                    break;
+                case 3:
+                    System.out.println("Saliendo...");
+                    break;
+                default:
+                    System.out.println("Opción inválida. Por favor intente de nuevo.");
+            }
+        } while (option != 3);
     }
 
     private void createExercise() {
@@ -400,13 +445,103 @@ public class Menu {
             String videoUrl = scanner.nextLine();
             System.out.print("¿Es predefinido? (S/N): ");
             boolean isPredefined = scanner.nextLine().equalsIgnoreCase("S");
+            int option;
+            Set<Category> categoriesToAdd = new HashSet<>();
+            do {
+                System.out.println("Ingrese una opción: ");
+                System.out.println("1. Añadir categorías");
+                System.out.println("2. Ver categorias");
+                System.out.println("4. Salir");
 
-            Exercise exercise = new Exercise(name, description, explanation, videoUrl, isPredefined);
+                option = scanner.nextInt();
+                switch (option) {
+                    case 1:
+                        categoriesToAdd = addCategoryToExercise();
+                        break;
+                    case 2:
+                        if (categories.isEmpty()) {
+                            System.out.println("No hay categorías registradas.");
+                        } else {
+                            System.out.println("\n--- Categorías registradas ---");
+                            for (Category category : categories) {
+                                System.out.println(category.toString());
+                            }
+                        }
+                        break;
+                    case 3:
+                        System.out.println("Saliendo...");
+                        break;
+                    default:
+                        System.out.println("Opción inválida. Por favor intente de nuevo.");
+                }
+            } while (option != 3);
+
+            Exercise exercise = new Exercise(name, description, explanation, videoUrl, isPredefined, categoriesToAdd);
             exercises.add(exercise);
             System.out.println("Ejercicio creado exitosamente.");
         } catch (Exception e) {
             System.out.println("Error creando ejercicio: " + e.getMessage());
         }
+    }
+
+    private Set<Category> addCategoryToExercise() {
+        Set<Category> categoriesToAdd = new HashSet<>();
+        int option;
+        do {
+            System.out.println("Añadir Categorias al ejercicio");
+            System.out.println("1. Añadir categoría");
+            System.out.println("2. Ver categorias por añadir");
+            System.out.println("3. Eliminar categoría");
+            System.out.println("4. Guardar categorías añadidas y salir");
+            System.out.println("5. Cancelar");
+
+            option = scanner.nextInt();
+            switch (option) {
+                case 1:
+                    System.out.print("Ingrese el nombre de la categoría a añadir: ");
+                    String categoryName = scanner.nextLine();
+                    Category categoryToAdd = categories.stream().filter(c -> c.getName().equals(categoryName)).findFirst().orElse(null);
+                    if (categoryToAdd == null) {
+                        System.out.println("No se encontró la categoría.");
+                    } else {
+                        categoriesToAdd.add(categoryToAdd);
+                        System.out.println("Categoría añadida exitosamente.");
+                    }
+                    break;
+                case 2:
+                    System.out.println("Categorias por añadir");
+                    if (categoriesToAdd.isEmpty()) {
+                        System.out.println("No hay categorías añadidas.");
+                    } else {
+                        for (Category category : categoriesToAdd) {
+                            System.out.println(category.toString());
+                        }
+                    }
+                    break;
+                case 3:
+                    System.out.print("Ingrese el id de la categoría a eliminar: ");
+                    int categoryIdToRemove = scanner.nextInt();
+                    Category categoryToRemove = categoriesToAdd.stream().filter(c -> c.getId() == categoryIdToRemove).findFirst().orElse(null);
+                    if (categoryToRemove == null) {
+                        System.out.println("No se encontró la categoría.");
+                    } else {
+                        categoriesToAdd.remove(categoryToRemove);
+                        System.out.println("Categoría eliminada exitosamente.");
+                    }
+                    break;
+                case 4:
+                    System.out.println("Guardando categorías añadidas...");
+                    break;
+                case 5:
+                    categoriesToAdd.clear();
+                    System.out.println("Cancelando...");
+                    break;
+                default:
+                    System.out.println("Opción inválida. Por favor intente de nuevo.");
+            }
+        } while (option != 4 || option != 5);
+
+        return categoriesToAdd;
     }
 
     private void panelRoutine() {

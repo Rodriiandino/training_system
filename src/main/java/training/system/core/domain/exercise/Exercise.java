@@ -1,6 +1,9 @@
 package training.system.core.domain.exercise;
 
+import training.system.core.domain.category.Category;
 import training.system.core.domain.user.User;
+
+import java.util.Set;
 
 public class Exercise {
     private int id;
@@ -9,62 +12,69 @@ public class Exercise {
     private String explanation;
     private String videoUrl;
     private boolean isPredefined;
+    private Set<Category> categories;
     private User user;
     private User trainer;
 
-    public Exercise(String name, String description, String explanation, String videoUrl, boolean isPredefined) {
+    public Exercise(String name, String description, String explanation, String videoUrl, boolean isPredefined, Set<Category> categories) {
         this.name = name;
         this.description = description;
         this.explanation = explanation;
         this.videoUrl = videoUrl;
         this.isPredefined = isPredefined;
+        this.categories = categories;
     }
 
-    public Exercise(String name, String description, String explanation, String videoUrl, boolean isPredefined, User user) {
+    public Exercise(String name, String description, String explanation, String videoUrl, boolean isPredefined, Set<Category> categories, User user) {
         this.name = name;
         this.description = description;
         this.explanation = explanation;
         this.videoUrl = videoUrl;
         this.isPredefined = isPredefined;
+        this.categories = categories;
         this.user = user;
     }
 
-    public Exercise(String name, String description, String explanation, String videoUrl, boolean isPredefined, User user, User trainer) {
+    public Exercise(String name, String description, String explanation, String videoUrl, boolean isPredefined, Set<Category> categories, User user, User trainer) {
         this.name = name;
         this.description = description;
         this.explanation = explanation;
         this.videoUrl = videoUrl;
         this.isPredefined = isPredefined;
+        this.categories = categories;
         this.user = user;
         this.trainer = trainer;
     }
 
-    public Exercise(int id, String name, String description, String explanation, String videoUrl, boolean isPredefined) {
+    public Exercise(int id, String name, String description, String explanation, String videoUrl, boolean isPredefined, Set<Category> categories) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.explanation = explanation;
         this.videoUrl = videoUrl;
         this.isPredefined = isPredefined;
+        this.categories = categories;
     }
 
-    public Exercise(int id, String name, String description, String explanation, String videoUrl, boolean isPredefined, User user) {
+    public Exercise(int id, String name, String description, String explanation, String videoUrl, boolean isPredefined, Set<Category> categories, User user) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.explanation = explanation;
         this.videoUrl = videoUrl;
         this.isPredefined = isPredefined;
+        this.categories = categories;
         this.user = user;
     }
 
-    public Exercise(int id, String name, String description, String explanation, String videoUrl, boolean isPredefined, User user, User trainer) {
+    public Exercise(int id, String name, String description, String explanation, String videoUrl, boolean isPredefined, Set<Category> categories, User user, User trainer) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.explanation = explanation;
         this.videoUrl = videoUrl;
         this.isPredefined = isPredefined;
+        this.categories = categories;
         this.user = user;
         this.trainer = trainer;
     }
