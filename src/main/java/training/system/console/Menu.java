@@ -3,6 +3,8 @@ package training.system.console;
 import training.system.core.domain.category.Category;
 import training.system.core.domain.exercise.Exercise;
 import training.system.core.domain.gym.Gym;
+import training.system.core.domain.note.Note;
+import training.system.core.domain.progress.Progress;
 import training.system.core.domain.routine.Routine;
 import training.system.core.domain.user.Role;
 import training.system.core.domain.user.RoleEnum;
@@ -18,10 +20,12 @@ public class Menu {
     private List<Exercise> exercises = new ArrayList<>();
     private List<Routine> routines = new ArrayList<>();
     private List<Category> categories = new ArrayList<>();
-    private List<String> notes = new ArrayList<>();
-    private List<String> progress = new ArrayList<>();
+    private List<Note> notes = new ArrayList<>();
+    private List<Progress> progress = new ArrayList<>();
 
     public void start() {
+        initializeData();
+
         int option;
         if (userAuth == null) {
             do {
@@ -54,6 +58,26 @@ public class Menu {
             menu();
         }
         scanner.close();
+    }
+
+    public void initializeData() {
+        User user1 = new User("rodrigo", "andino", "andino@", "1234");
+        user1.addRole(new Role(RoleEnum.ROLE_ADMINISTRATOR));
+        User user2 = new User("gonzalo", "sanchez", "sanchez@", "1234");
+        user2.addRole(new Role(RoleEnum.ROLE_TRAINER));
+        User user3 = new User("mili", "gomez", "gomez@", "1234");
+
+        Category category1 = new Category("piernas", "ejercicios de piernas");
+        Category category2 = new Category("brazos", "ejercicios de brazos");
+        Category category3 = new Category("abdominales", "ejercicios de abdominales");
+
+        Exercise exercise1 = new Exercise("sentadillas", "ejercicio de piernas", "ejercicio de piernas", "URL", true, Set.of(category1));
+        Exercise exercise2 = new Exercise("flexiones", "ejercicio de brazos", "ejercicio de brazos", "URL", true, Set.of(category2));
+        Exercise exercise3 = new Exercise("plancha", "ejercicio de abdominales", "ejercicio de abdominales", "URL", true, Set.of(category3));
+
+        users.addAll(List.of(user1, user2, user3));
+        categories.addAll(List.of(category1, category2, category3));
+        exercises.addAll(List.of(exercise1, exercise2, exercise3));
     }
 
     private User login() {
@@ -443,8 +467,6 @@ public class Menu {
             String explanation = scanner.nextLine();
             System.out.print("Ingrese la URL del video: ");
             String videoUrl = scanner.nextLine();
-            System.out.print("¿Es predefinido? (S/N): ");
-            boolean isPredefined = scanner.nextLine().equalsIgnoreCase("S");
             int option;
             Set<Category> categoriesToAdd = new HashSet<>();
             do {
@@ -478,7 +500,7 @@ public class Menu {
                 }
             } while (option != 3);
 
-            Exercise exercise = new Exercise(name, description, explanation, videoUrl, isPredefined, categoriesToAdd);
+            Exercise exercise = new Exercise(name, description, explanation, videoUrl, false, categoriesToAdd);
             exercises.add(exercise);
             System.out.println("Ejercicio creado exitosamente.");
         } catch (Exception e) {
@@ -702,9 +724,113 @@ public class Menu {
     }
 
     private void panelNote() {
+        int option;
+        do {
+            System.out.println("\n--- Panel de Notas ---");
+            System.out.println("1. Crear nota");
+            System.out.println("2. Ver notas");
+            System.out.println("3. Salir");
+            System.out.print("Ingrese su opción: ");
+            option = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (option) {
+                case 1:
+                    createNote();
+                    break;
+                case 2:
+                    if (notes.isEmpty()) {
+                        System.out.println("No hay notas registradas.");
+                    } else {
+                        System.out.println("\n--- Notas registradas ---");
+                        for (Note note : notes) {
+                            System.out.println(note);
+                        }
+                    }
+                    break;
+                case 3:
+                    System.out.println("Saliendo...");
+                    break;
+                default:
+                    System.out.println("Opción inválida. Por favor intente de nuevo.");
+            }
+        } while (option != 3);
+    }
+
+    private void createNote() {
+        try {
+            System.out.print("Ingrese el título: ");
+            String title = scanner.nextLine();
+            System.out.print("Ingrese el contenido: ");
+            String content = scanner.nextLine();
+            System.out.print("Ingrese el propósito: ");
+            String purpose = scanner.nextLine();
+
+            Note note = new Note(title, content, purpose, new Date(), userAuth);
+            notes.add(note);
+            System.out.println("Nota creada exitosamente.");
+
+        } catch (Exception e) {
+            System.out.println("Error creando nota: " + e.getMessage());
+        }
     }
 
     private void panelProgress() {
+        int option;
+        do {
+            System.out.println("\n--- Panel de Progreso ---");
+            System.out.println("1. Crear progreso");
+            System.out.println("2. Ver progresos");
+            System.out.println("3. Salir");
+            System.out.print("Ingrese su opción: ");
+            option = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (option) {
+                case 1:
+                    createProgress();
+                    break;
+                case 2:
+                    if (progress.isEmpty()) {
+                        System.out.println("No hay progresos registrados.");
+                    } else {
+                        System.out.println("\n--- Progresos registrados ---");
+                        for (Progress p : progress) {
+                            System.out.println(p);
+                        }
+                    }
+                    break;
+                case 3:
+                    System.out.println("Saliendo...");
+                    break;
+                default:
+                    System.out.println("Opción inválida. Por favor intente de nuevo.");
+            }
+        } while (option != 3);
+    }
+
+    private void createProgress() {
+        try {
+            System.out.print("Ingrese las repeticiones: ");
+            int repetitions = scanner.nextInt();
+            System.out.print("Ingrese el peso: ");
+            int weight = scanner.nextInt();
+            System.out.print("Ingrese el tiempo: ");
+            int time = scanner.nextInt();
+            System.out.print("Ingrese el nombre del ejercicio: ");
+            String exerciseName = scanner.nextLine();
+            Exercise exercise = exercises.stream().filter(e -> e.getName().equals(exerciseName)).findFirst().orElse(null);
+            if (exercise == null) {
+                System.out.println("No se encontró el ejercicio.");
+                return;
+            }
+            Progress p = new Progress(new Date(), repetitions, weight, time, userAuth, exercise);
+            progress.add(p);
+            System.out.println("Progreso creado exitosamente.");
+
+        } catch (Exception e) {
+            System.out.println("Error creando progreso: " + e.getMessage());
+        }
     }
 
     private void viewUsers() {
