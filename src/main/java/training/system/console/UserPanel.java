@@ -8,7 +8,7 @@ import training.system.core.domain.user.User;
 import java.util.Scanner;
 
 public class UserPanel {
-    private static Scanner scanner;
+    private Scanner scanner;
 
     public UserPanel(Scanner scanner) {
         this.scanner = scanner;

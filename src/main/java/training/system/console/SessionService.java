@@ -6,7 +6,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class SessionService {
-    private static Scanner scanner;
+    private Scanner scanner;
 
     public SessionService(Scanner scanner) {
         this.scanner = scanner;

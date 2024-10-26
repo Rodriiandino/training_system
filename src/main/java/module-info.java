@@ -2,6 +2,7 @@ module training.system {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires mysql.connector.j;
 
 
     opens training.system to javafx.fxml;

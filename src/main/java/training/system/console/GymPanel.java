@@ -9,7 +9,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class GymPanel {
-    private static Scanner scanner;
+    private Scanner scanner;
 
     public GymPanel(Scanner scanner) {
         this.scanner = scanner;

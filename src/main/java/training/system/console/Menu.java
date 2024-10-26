@@ -14,7 +14,7 @@ import training.system.core.domain.user.User;
 import java.util.*;
 
 public class Menu {
-    private Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
     private User userAuth = null;
     private Set<User> users = new HashSet<>();
     private Set<Gym> gyms = new HashSet<>();
@@ -24,13 +24,13 @@ public class Menu {
     private Set<Note> notes = new HashSet<>();
     private Set<Progress> progress = new HashSet<>();
 
-    private SessionService sessionService = new SessionService(scanner);
-    private UserPanel userPanel = new UserPanel(scanner);
-    private GymPanel gymPanel = new GymPanel(scanner);
-    private ExercisePanel exercisePanel = new ExercisePanel(scanner);
-    private RoutinePanel routinePanel = new RoutinePanel(scanner);
-    private NotePanel notePanel = new NotePanel(scanner);
-    private ProgressPanel progressPanel = new ProgressPanel(scanner);
+    private final SessionService sessionService = new SessionService(scanner);
+    private final UserPanel userPanel = new UserPanel(scanner);
+    private final GymPanel gymPanel = new GymPanel(scanner);
+    private final ExercisePanel exercisePanel = new ExercisePanel(scanner);
+    private final RoutinePanel routinePanel = new RoutinePanel(scanner);
+    private final NotePanel notePanel = new NotePanel(scanner);
+    private final ProgressPanel progressPanel = new ProgressPanel(scanner);
 
     public void start() {
         initializeData();
@@ -95,10 +95,9 @@ public class Menu {
             System.out.println("2. Ingresar al panel de gimnasios");
             System.out.println("3. Ingresar al panel de ejercicios");
             System.out.println("4. Ingresar al panel de rutinas");
-            System.out.println("5. Ingresar al panel de categorías");
-            System.out.println("6. Ingresar al panel de notas");
-            System.out.println("7. Ingresar al panel de progreso");
-            System.out.println("8. Salir");
+            System.out.println("5. Ingresar al panel de notas");
+            System.out.println("6. Ingresar al panel de progreso");
+            System.out.println("7. Salir");
 
             option = InputUtils.getValidatedInput(scanner, "Ingrese su opción: ");
 
@@ -110,16 +109,16 @@ public class Menu {
                     gymPanel.panelGym(users, userAuth, gyms);
                     break;
                 case 3:
-                    exercisePanel.panelExercise(exercises, categories, userAuth);
+                    exercisePanel.panelExercise(exercises, categories, users, userAuth);
                     break;
                 case 4:
-                    routinePanel.panelRoutine(routines, exercises, userAuth);
+                    routinePanel.panelRoutine(routines, exercises, users,userAuth);
                     break;
                 case 5:
-                    notePanel.panelNote(notes, userAuth);
+                    notePanel.panelNote(notes, users, userAuth);
                     break;
                 case 6:
-                    progressPanel.panelProgress(exercises, progress, userAuth);
+                    progressPanel.panelProgress(exercises, progress, users, userAuth);
                     break;
                 case 7:
                     System.out.println("Saliendo...");
