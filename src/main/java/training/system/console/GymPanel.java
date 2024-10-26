@@ -1,5 +1,6 @@
 package training.system.console;
 
+import training.system.console.tools.InputUtils;
 import training.system.core.domain.gym.Gym;
 import training.system.core.domain.user.User;
 
@@ -25,9 +26,8 @@ public class GymPanel {
             System.out.println("5. Ver usuarios");
             System.out.println("6. Ver datos del gimnasio");
             System.out.println("7. Salir");
-            System.out.print("Ingrese su opción: ");
-            option = scanner.nextInt();
-            scanner.nextLine();
+
+            option = InputUtils.getValidatedInput(scanner, "Ingrese su opción: ");
 
             switch (option) {
                 case 1:
@@ -107,6 +107,7 @@ public class GymPanel {
                 return;
             }
             gym.addTrainer(trainer);
+            trainer.addGymTrainer(gym);
             System.out.println("Entrenador añadido al gimnasio exitosamente.");
         } catch (Exception e) {
             System.out.println("Error añadiendo entrenador al gimnasio: " + e.getMessage());
@@ -165,6 +166,7 @@ public class GymPanel {
                 return;
             }
             trainer.addClient(client);
+            client.addTrainer(trainer);
             System.out.println("Entrenador vinculado con cliente exitosamente.");
         } catch (Exception e) {
             System.out.println("Error vinculando entremador con cliente: " + e.getMessage());

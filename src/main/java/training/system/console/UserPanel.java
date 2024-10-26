@@ -1,5 +1,6 @@
 package training.system.console;
 
+import training.system.console.tools.InputUtils;
 import training.system.core.domain.user.Role;
 import training.system.core.domain.user.RoleEnum;
 import training.system.core.domain.user.User;
@@ -22,9 +23,8 @@ public class UserPanel {
             System.out.println("3. Convertirme en entrenador");
             System.out.println("4. Convertirme en administrador");
             System.out.println("5. Salir");
-            System.out.print("Ingrese su opción: ");
-            option = scanner.nextInt();
-            scanner.nextLine();
+
+            option = InputUtils.getValidatedInput(scanner, "Ingrese su opción: ");
 
             switch (option) {
                 case 1:
@@ -59,9 +59,8 @@ public class UserPanel {
             System.out.println("4. Modificar contraseña");
             System.out.println("5. Mostrar mis datos");
             System.out.println("6. Salir");
-            System.out.print("Ingrese su opción: ");
-            option = scanner.nextInt();
-            scanner.nextLine();
+
+            option = InputUtils.getValidatedInput(scanner, "Ingrese su opción: ");
 
             switch (option) {
                 case 1:

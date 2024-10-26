@@ -54,7 +54,6 @@ public class Note {
         return id;
     }
 
-
     public String getTitle() {
         return title;
     }
