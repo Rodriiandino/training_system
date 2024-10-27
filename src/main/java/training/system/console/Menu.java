@@ -16,13 +16,13 @@ import java.util.*;
 public class Menu {
     private final Scanner scanner = new Scanner(System.in);
     private User userAuth = null;
-    private Set<User> users = new HashSet<>();
-    private Set<Gym> gyms = new HashSet<>();
-    private Set<Exercise> exercises = new HashSet<>();
-    private Set<Routine> routines = new HashSet<>();
-    private Set<Category> categories = new HashSet<>();
-    private Set<Note> notes = new HashSet<>();
-    private Set<Progress> progress = new HashSet<>();
+    private final Set<User> users = new HashSet<>();
+    private final Set<Gym> gyms = new HashSet<>();
+    private final Set<Exercise> exercises = new HashSet<>();
+    private final Set<Routine> routines = new HashSet<>();
+    private final Set<Category> categories = new HashSet<>();
+    private final Set<Note> notes = new HashSet<>();
+    private final Set<Progress> progress = new HashSet<>();
 
     private final SessionService sessionService = new SessionService(scanner);
     private final UserPanel userPanel = new UserPanel(scanner);
@@ -78,9 +78,24 @@ public class Menu {
         Category category2 = new Category("brazos", "ejercicios de brazos");
         Category category3 = new Category("abdominales", "ejercicios de abdominales");
 
-        Exercise exercise1 = new Exercise("sentadillas", "ejercicio de piernas", "ejercicio de piernas", "URL", true, Set.of(category1));
-        Exercise exercise2 = new Exercise("flexiones", "ejercicio de brazos", "ejercicio de brazos", "URL", true, Set.of(category2));
-        Exercise exercise3 = new Exercise("plancha", "ejercicio de abdominales", "ejercicio de abdominales", "URL", true, Set.of(category3));
+        Exercise exercise1 = new Exercise("sentadillas",
+                "ejercicio de piernas",
+                "ejercicio de piernas",
+                "URL",
+                true,
+                Set.of(category1));
+        Exercise exercise2 = new Exercise("flexiones",
+                "ejercicio de brazos",
+                "ejercicio de brazos",
+                "URL",
+                true,
+                Set.of(category2));
+        Exercise exercise3 = new Exercise("plancha",
+                "ejercicio de abdominales",
+                "ejercicio de abdominales",
+                "URL",
+                true,
+                Set.of(category3));
 
         users.addAll(List.of(user1, user2, user3));
         categories.addAll(List.of(category1, category2, category3));
@@ -90,7 +105,7 @@ public class Menu {
     private void menu() {
         int option;
         do {
-            System.out.println("\n--- Training Management System ---");
+            System.out.println("\n--- Menú Principal ---");
             System.out.println("1. Ingresar al panel de usuario");
             System.out.println("2. Ingresar al panel de gimnasios");
             System.out.println("3. Ingresar al panel de ejercicios");
@@ -98,7 +113,6 @@ public class Menu {
             System.out.println("5. Ingresar al panel de notas");
             System.out.println("6. Ingresar al panel de progreso");
             System.out.println("7. Salir");
-
             option = InputUtils.getValidatedInput(scanner, "Ingrese su opción: ");
 
             switch (option) {

@@ -11,7 +11,7 @@ public class Progress {
     private int repetitions;
     private int weight;
     private int time;
-    private User user;
+    private final User user;
     private User trainer;
     private Exercise exercise;
 

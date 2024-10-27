@@ -39,6 +39,10 @@ public class SessionService {
             System.out.print("Ingrese la contraseña: ");
             String password = scanner.nextLine();
 
+            if (users.stream().anyMatch(user -> user.getEmail().equals(email))) {
+                throw new Exception("El correo electrónico ya está registrado.");
+            }
+
             User user = new User(name, lastName, email, password);
             users.add(user);
             System.out.println("Usuario creado exitosamente.");

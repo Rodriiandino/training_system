@@ -11,7 +11,7 @@ public class Note {
     private String content;
     private String purpose;
     private Date noteDate;
-    private User user;
+    private final User user;
     private User trainer;
 
     public Note(String title, String content, String purpose, Date noteDate, User user) {

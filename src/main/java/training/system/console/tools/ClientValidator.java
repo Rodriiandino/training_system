@@ -7,6 +7,14 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class ClientValidator {
+    /**
+     * Método para seleccionar y validar un cliente.
+     *
+     * @param scanner Scanner para leer la entrada del usuario.
+     * @param userAuth Usuario autenticado.
+     * @param clients Conjunto de clientes.
+     * @return El cliente seleccionado y validado.
+     */
     public static User selectAndValidateClient(Scanner scanner, User userAuth, Set<User> clients) {
 
         System.out.println("Tus clientes son:");
@@ -41,3 +49,5 @@ public class ClientValidator {
         return client;
     }
 }
+
+

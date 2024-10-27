@@ -9,9 +9,9 @@ public class Routine {
     private int id;
     private String name;
     private String description;
-    private User user;
+    private final User user;
     private User trainer;
-    private Set<Exercise> exercises;
+    private final Set<Exercise> exercises;
 
     public Routine(String name, String description, User user, Set<Exercise> exercises) {
         this.name = name;

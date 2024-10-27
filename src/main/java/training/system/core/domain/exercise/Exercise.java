@@ -12,7 +12,7 @@ public class Exercise {
     private String explanation;
     private String videoUrl;
     private boolean isPredefined;
-    private Set<Category> categories;
+    private final Set<Category> categories;
     private User user;
     private User trainer;
 

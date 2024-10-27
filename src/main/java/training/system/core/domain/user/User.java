@@ -6,11 +6,29 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class User extends Person {
+    /**
+     * Los roles de un usuario.
+     */
     private Set<Role> roles = new HashSet<>();
+    /**
+     * El gimnasio en el que entrena el usuario.
+     */
     private Gym gymTraining;
+    /**
+     * Los gimnasios en los que trabaja el usuario.
+     */
     private Set<Gym> gymTrainer = new HashSet<>();
+    /**
+     * El gimnasio que administra el usuario.
+     */
     private Gym gymManager;
+    /**
+     * Los clientes del usuario.
+     */
     private Set<User> clients = new HashSet<>();
+    /**
+     * Los entrenadores del usuario.
+     */
     private Set<User> trainers = new HashSet<>();
 
     public User(String name, String lastName, String email, String password) {
@@ -53,10 +71,6 @@ public class User extends Person {
 
     public void removeRole(Role role) {
         this.roles.remove(role);
-    }
-
-    public boolean isUser() {
-        return roles.contains(new Role(RoleEnum.ROLE_USER));
     }
 
     public boolean isTrainer() {

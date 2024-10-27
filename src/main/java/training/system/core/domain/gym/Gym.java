@@ -11,7 +11,7 @@ public class Gym {
     private String address;
     private Set<User> clients = new HashSet<>();
     private Set<User> trainers = new HashSet<>();
-    private Set<User> managers;
+    private final Set<User> managers;
 
     public Gym(String name, String address, Set<User> managers) {
         this.name = name;
@@ -134,3 +134,5 @@ public class Gym {
         return output.toString();
     }
 }
+
+
