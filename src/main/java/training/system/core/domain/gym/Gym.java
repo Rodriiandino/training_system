@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Gym {
-    private int id;
+    private Long id;
     private String name;
     private String address;
     private Set<User> clients = new HashSet<>();
@@ -19,7 +19,7 @@ public class Gym {
         this.managers = managers;
     }
 
-    public Gym(int id, String name, String address, Set<User> clients, Set<User> trainers, Set<User> managers) {
+    public Gym(Long id, String name, String address, Set<User> clients, Set<User> trainers, Set<User> managers) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -28,7 +28,7 @@ public class Gym {
         this.managers = managers;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 

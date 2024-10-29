@@ -1,4 +1,27 @@
 package training.system.core.domain.progress;
 
-public class ProgressController {
+import training.system.core.generic.GenericController;
+
+import java.util.Set;
+
+public class ProgressController implements GenericController<Progress, Long> {
+    @Override
+    public Progress create(Progress entity) {
+        return null;
+    }
+
+    @Override
+    public Progress update(Progress entity) {
+        return null;
+    }
+
+    @Override
+    public Set<Progress> list() {
+        return null;
+    }
+
+    @Override
+    public boolean delete(Long id) {
+        return false;
+    }
 }

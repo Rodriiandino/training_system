@@ -6,7 +6,7 @@ import training.system.core.domain.user.User;
 import java.util.Set;
 
 public class Routine {
-    private int id;
+    private Long id;
     private String name;
     private String description;
     private final User user;
@@ -28,7 +28,7 @@ public class Routine {
         this.exercises = exercises;
     }
 
-    public Routine(int id, String name, String description, User user, Set<Exercise> exercises) {
+    public Routine(Long id, String name, String description, User user, Set<Exercise> exercises) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -36,7 +36,7 @@ public class Routine {
         this.exercises = exercises;
     }
 
-    public Routine(int id, String name, String description, User user, User trainer, Set<Exercise> exercises) {
+    public Routine(Long id, String name, String description, User user, User trainer, Set<Exercise> exercises) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -45,7 +45,7 @@ public class Routine {
         this.exercises = exercises;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 

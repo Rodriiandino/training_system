@@ -3,7 +3,7 @@ package training.system.core.domain.user;
 import java.util.Objects;
 
 public abstract class Person {
-    private int id;
+    private Long id;
     private String name;
     private String lastName;
     private String email;
@@ -16,7 +16,7 @@ public abstract class Person {
         this.password = password;
     }
 
-    public Person(int id, String name, String lastName, String email, String password) {
+    public Person(Long id, String name, String lastName, String email, String password) {
         this.id = id;
         this.name = name;
         this.lastName = lastName;
@@ -24,7 +24,7 @@ public abstract class Person {
         this.password = password;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -70,7 +70,7 @@ public abstract class Person {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return id == person.id && Objects.equals(name, person.name) && Objects.equals(lastName, person.lastName) && Objects.equals(email, person.email);
+        return id.equals(person.id) && Objects.equals(name, person.name) && Objects.equals(lastName, person.lastName) && Objects.equals(email, person.email);
     }
 
     @Override

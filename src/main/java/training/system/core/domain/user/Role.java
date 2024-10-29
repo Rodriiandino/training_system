@@ -3,19 +3,19 @@ package training.system.core.domain.user;
 import java.util.Objects;
 
 public class Role {
-    private int id;
+    private Long id;
     private RoleEnum role;
 
     public Role(RoleEnum role) {
         this.role = role;
     }
 
-    public Role(int id, RoleEnum role) {
+    public Role(Long id, RoleEnum role) {
         this.id = id;
         this.role = role;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 

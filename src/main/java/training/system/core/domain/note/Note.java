@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class Note {
 
-    private int id;
+    private Long id;
     private String title;
     private String content;
     private String purpose;
@@ -31,7 +31,7 @@ public class Note {
         this.trainer = trainer;
     }
 
-    public Note(int id, String title, String content, String purpose, Date noteDate, User user) {
+    public Note(Long id, String title, String content, String purpose, Date noteDate, User user) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -40,7 +40,7 @@ public class Note {
         this.user = user;
     }
 
-    public Note(int id, String title, String content, String purpose, Date noteDate, User user, User trainer) {
+    public Note(Long id, String title, String content, String purpose, Date noteDate, User user, User trainer) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -50,7 +50,7 @@ public class Note {
         this.trainer = trainer;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 

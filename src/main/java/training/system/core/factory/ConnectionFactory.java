@@ -15,12 +15,22 @@ public class ConnectionFactory implements AutoCloseable {
         try {
             connection = DriverManager.getConnection(url, usuario, password);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error al conectar a la base de datos", e);
         }
     }
 
-    @Override
-    public void close() throws Exception {
+    public Connection getConnection() {
+        return connection;
+    }
 
+    @Override
+    public void close() throws SQLException {
+        if (connection != null && !connection.isClosed()) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error al cerrar la conexión", e);
+            }
+        }
     }
 }

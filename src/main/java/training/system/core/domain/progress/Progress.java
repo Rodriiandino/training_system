@@ -6,7 +6,7 @@ import training.system.core.domain.user.User;
 import java.util.Date;
 
 public class Progress {
-    private int id;
+    private Long id;
     private Date progressDate;
     private int repetitions;
     private int weight;
@@ -34,7 +34,7 @@ public class Progress {
         this.exercise = exercise;
     }
 
-    public Progress(int id, Date progressDate, int repetitions, int weight, int time, User user, Exercise exercise) {
+    public Progress(Long id, Date progressDate, int repetitions, int weight, int time, User user, Exercise exercise) {
         this.id = id;
         this.progressDate = progressDate;
         this.repetitions = repetitions;
@@ -44,7 +44,7 @@ public class Progress {
         this.exercise = exercise;
     }
 
-    public Progress(int id, Date progressDate, int repetitions, int weight, int time, User user, User trainer, Exercise exercise) {
+    public Progress(Long id, Date progressDate, int repetitions, int weight, int time, User user, User trainer, Exercise exercise) {
         this.id = id;
         this.progressDate = progressDate;
         this.repetitions = repetitions;
@@ -55,7 +55,7 @@ public class Progress {
         this.exercise = exercise;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 

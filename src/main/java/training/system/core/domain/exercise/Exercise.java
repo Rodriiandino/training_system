@@ -6,7 +6,7 @@ import training.system.core.domain.user.User;
 import java.util.Set;
 
 public class Exercise {
-    private int id;
+    private Long id;
     private String name;
     private String description;
     private String explanation;
@@ -46,7 +46,7 @@ public class Exercise {
         this.trainer = trainer;
     }
 
-    public Exercise(int id, String name, String description, String explanation, String videoUrl, boolean isPredefined, Set<Category> categories) {
+    public Exercise(Long id, String name, String description, String explanation, String videoUrl, boolean isPredefined, Set<Category> categories) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -56,7 +56,7 @@ public class Exercise {
         this.categories = categories;
     }
 
-    public Exercise(int id, String name, String description, String explanation, String videoUrl, boolean isPredefined, Set<Category> categories, User user) {
+    public Exercise(Long id, String name, String description, String explanation, String videoUrl, boolean isPredefined, Set<Category> categories, User user) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -67,7 +67,7 @@ public class Exercise {
         this.user = user;
     }
 
-    public Exercise(int id, String name, String description, String explanation, String videoUrl, boolean isPredefined, Set<Category> categories, User user, User trainer) {
+    public Exercise(Long id, String name, String description, String explanation, String videoUrl, boolean isPredefined, Set<Category> categories, User user, User trainer) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -79,7 +79,7 @@ public class Exercise {
         this.trainer = trainer;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 

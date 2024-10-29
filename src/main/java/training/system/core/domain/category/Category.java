@@ -1,7 +1,7 @@
 package training.system.core.domain.category;
 
 public class Category {
-    private int id;
+    private Long id;
     private String name;
     private String description;
 
@@ -10,14 +10,18 @@ public class Category {
         this.description = description;
     }
 
-    public Category(int id, String name, String description) {
+    public Category(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
+    }
+
+    public void setId(long aLong) {
+        this.id = aLong;
     }
 
     public String getName() {

@@ -36,26 +36,26 @@ public class User extends Person {
         this.roles.add(new Role(RoleEnum.ROLE_USER));
     }
 
-    public User(int id, String name, String lastName, String email, String password, Set<Role> roles) {
+    public User(Long id, String name, String lastName, String email, String password, Set<Role> roles) {
         super(id, name, lastName, email, password);
         this.roles = roles;
     }
 
-    public User(int id, String name, String lastName, String email, String password, Set<Role> roles, Gym gymTraining, Set<User> trainers) {
+    public User(Long id, String name, String lastName, String email, String password, Set<Role> roles, Gym gymTraining, Set<User> trainers) {
         super(id, name, lastName, email, password);
         this.roles = roles;
         this.gymTraining = gymTraining;
         this.trainers = trainers;
     }
 
-    public User(int id, String name, String lastName, String email, String password, Set<Role> roles, Set<Gym> gymTrainer, Set<User> clients) {
+    public User(Long id, String name, String lastName, String email, String password, Set<Role> roles, Set<Gym> gymTrainer, Set<User> clients) {
         super(id, name, lastName, email, password);
         this.roles = roles;
         this.gymTrainer = gymTrainer;
         this.clients = clients;
     }
 
-    public User(int id, String name, String lastName, String email, String password, Set<Role> roles, Gym gymManager) {
+    public User(Long id, String name, String lastName, String email, String password, Set<Role> roles, Gym gymManager) {
         super(id, name, lastName, email, password);
         this.roles = roles;
         this.gymManager = gymManager;
