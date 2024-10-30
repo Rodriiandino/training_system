@@ -1,10 +1,12 @@
 package training.system.core.generic;
 
+import training.system.core.exception.DAOException;
+
 import java.util.Set;
 
 public interface GenericDao<T, ID> {
-    T create(T entity);
-    T update(T entity);
-    Set<T> list();
-    boolean delete(ID id);
+    T create(T entity) throws DAOException;
+    T update(T entity) throws DAOException;
+    Set<T> list() throws DAOException;
+    boolean delete(ID id) throws DAOException;
 }

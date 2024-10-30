@@ -1,5 +1,8 @@
 package training.system.core.domain.category;
 
+import training.system.core.exception.ControllerException;
+import training.system.core.exception.DAOException;
+import training.system.core.exception.DatabaseConnectionException;
 import training.system.core.factory.ConnectionFactory;
 import training.system.core.generic.GenericController;
 
@@ -9,51 +12,49 @@ public class CategoryController implements GenericController<Category, Long> {
     private final CategoryDAO categoryDAO;
 
     public CategoryController() {
-        var factory = new ConnectionFactory();
-        this.categoryDAO = new CategoryDAO(factory.getConnection());
+        try {
+            ConnectionFactory connectionFactory = new ConnectionFactory();
+            this.categoryDAO = new CategoryDAO(connectionFactory.getConnection());
+        } catch (DatabaseConnectionException e) {
+            throw new RuntimeException("Error al conectar a la base de datos", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al crear el controlador de categoría", e);
+        }
     }
 
     @Override
-    public Category create(Category entity) {
+    public Category create(Category entity) throws ControllerException {
         try {
             return categoryDAO.create(entity);
-        } catch (Exception e) {
-            System.err.println("Error al crear la categoría");
-            e.printStackTrace();
-            return null;
+        } catch (DAOException e) {
+            throw new ControllerException("Error al crear la categoría", e);
         }
     }
 
     @Override
-    public Category update(Category entity) {
+    public Category update(Category entity) throws ControllerException {
         try {
             return categoryDAO.update(entity);
-        } catch (Exception e) {
-            System.err.println("Error al actualizar la categoría");
-            e.printStackTrace();
-            return null;
+        } catch (DAOException e) {
+            throw new ControllerException("Error al actualizar la categoría", e);
         }
     }
 
     @Override
-    public Set<Category> list() {
+    public Set<Category> list() throws ControllerException {
         try {
             return categoryDAO.list();
-        } catch (Exception e) {
-            System.err.println("Error al listar las categorías");
-            e.printStackTrace();
-            return null;
+        } catch (DAOException e) {
+            throw new ControllerException("Error al listar las categorías", e);
         }
     }
 
     @Override
-    public boolean delete(Long id) {
+    public boolean delete(Long id) throws ControllerException {
         try {
             return categoryDAO.delete(id);
-        } catch (Exception e) {
-            System.err.println("Error al eliminar la categoría");
-            e.printStackTrace();
-            return false;
+        } catch (DAOException e) {
+            throw new ControllerException("Error al eliminar la categoría", e);
         }
     }
 }
