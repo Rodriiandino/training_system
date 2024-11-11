@@ -8,7 +8,7 @@ import training.system.core.generic.GenericController;
 
 import java.util.Set;
 
-public class UserController implements GenericController<User, Long> {
+public class UserController implements GenericController<User, Long>, IUser {
 
     private final UserDAO userDAO;
 
@@ -51,11 +51,47 @@ public class UserController implements GenericController<User, Long> {
     }
 
     @Override
+    public User search(Long aLong) throws ControllerException {
+        try {
+            return userDAO.search(aLong);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al buscar el usuario", e);
+        }
+    }
+
+    @Override
     public boolean delete(Long id) throws ControllerException {
         try {
             return userDAO.delete(id);
         } catch (DAOException e) {
             throw new ControllerException("Error al eliminar el usuario", e);
+        }
+    }
+
+    @Override
+    public boolean authenticate(String email, String password) throws ControllerException {
+        try {
+            return userDAO.authenticate(email, password);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al autenticar el usuario", e);
+        }
+    }
+
+    @Override
+    public void becomeTrainer() throws ControllerException {
+        try {
+            userDAO.becomeTrainer();
+        } catch (DAOException e) {
+            throw new ControllerException("Error al convertirse en entrenador", e);
+        }
+    }
+
+    @Override
+    public void becomeAdministrator() throws ControllerException {
+        try {
+            userDAO.becomeAdministrator();
+        } catch (DAOException e) {
+            throw new ControllerException("Error al convertirse en administrador", e);
         }
     }
 }

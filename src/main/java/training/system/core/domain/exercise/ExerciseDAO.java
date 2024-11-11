@@ -30,6 +30,11 @@ public class ExerciseDAO implements GenericDao<Exercise, Long> {
     }
 
     @Override
+    public Exercise search(Long aLong) throws DAOException {
+        return null;
+    }
+
+    @Override
     public boolean delete(Long id) throws DAOException {
         return false;
     }

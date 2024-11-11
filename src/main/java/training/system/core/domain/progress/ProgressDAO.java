@@ -30,6 +30,11 @@ public class ProgressDAO implements GenericDao<Progress, Long> {
     }
 
     @Override
+    public Progress search(Long aLong) throws DAOException {
+        return null;
+    }
+
+    @Override
     public boolean delete(Long id) throws DAOException {
         return false;
     }

@@ -50,6 +50,15 @@ public class CategoryController implements GenericController<Category, Long> {
     }
 
     @Override
+    public Category search(Long aLong) throws ControllerException {
+        try {
+            return categoryDAO.search(aLong);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al buscar la categoría", e);
+        }
+    }
+
+    @Override
     public boolean delete(Long id) throws ControllerException {
         try {
             return categoryDAO.delete(id);

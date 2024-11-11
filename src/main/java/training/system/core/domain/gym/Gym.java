@@ -11,7 +11,7 @@ public class Gym {
     private String address;
     private Set<User> clients = new HashSet<>();
     private Set<User> trainers = new HashSet<>();
-    private final Set<User> managers;
+    private Set<User> managers;
 
     public Gym(String name, String address, Set<User> managers) {
         this.name = name;
@@ -28,8 +28,18 @@ public class Gym {
         this.managers = managers;
     }
 
+    public Gym(long id, String name, String address) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

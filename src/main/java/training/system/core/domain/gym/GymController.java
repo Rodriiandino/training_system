@@ -51,6 +51,15 @@ public class GymController implements GenericController<Gym, Long> {
     }
 
     @Override
+    public Gym search(Long aLong) throws ControllerException {
+        try {
+            return gymDAO.search(aLong);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al buscar el gimnasio", e);
+        }
+    }
+
+    @Override
     public boolean delete(Long id) throws ControllerException {
         try {
             return gymDAO.delete(id);

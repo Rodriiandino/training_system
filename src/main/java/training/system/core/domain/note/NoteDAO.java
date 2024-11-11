@@ -30,6 +30,11 @@ public class NoteDAO implements GenericDao<Note, Long> {
     }
 
     @Override
+    public Note search(Long aLong) throws DAOException {
+        return null;
+    }
+
+    @Override
     public boolean delete(Long id) throws DAOException {
         return false;
     }

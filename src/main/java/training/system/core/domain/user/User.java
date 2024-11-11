@@ -61,6 +61,10 @@ public class User extends Person {
         this.gymManager = gymManager;
     }
 
+    public User(Long id, String name, String lastName, String email) {
+        super(id, name, lastName, email);
+    }
+
     public Set<Role> getRoles() {
         return roles;
     }

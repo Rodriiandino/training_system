@@ -51,6 +51,15 @@ public class ExerciseController implements GenericController<Exercise, Long> {
     }
 
     @Override
+    public Exercise search(Long aLong) throws ControllerException {
+        try {
+            return exerciseDAO.search(aLong);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al buscar el ejercicio", e);
+        }
+    }
+
+    @Override
     public boolean delete(Long id) throws ControllerException {
         try {
             return exerciseDAO.delete(id);

@@ -51,6 +51,15 @@ public class ProgressController implements GenericController<Progress, Long> {
     }
 
     @Override
+    public Progress search(Long aLong) throws ControllerException {
+        try {
+            return progressDAO.search(aLong);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al buscar el progreso", e);
+        }
+    }
+
+    @Override
     public boolean delete(Long id) throws ControllerException {
         try {
             return progressDAO.delete(id);

@@ -17,7 +17,7 @@ public class CategoryDAO implements GenericDao<Category, Long> {
 
     @Override
     public Category create(Category entity) throws DAOException {
-        String sql = "INSERT INTO category (name, description) VALUES (?, ?)";
+        String sql = "INSERT INTO training_system.category (name, description) VALUES (?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             connection.setAutoCommit(false);
@@ -34,7 +34,6 @@ public class CategoryDAO implements GenericDao<Category, Long> {
 
             connection.commit();
 
-            entity.setId(entity.getId());
             return entity;
         } catch (SQLException e) {
             try {
@@ -48,7 +47,7 @@ public class CategoryDAO implements GenericDao<Category, Long> {
 
     @Override
     public Category update(Category entity) throws DAOException {
-        String sql = "UPDATE category SET name = ?, description = ? WHERE id = ?";
+        String sql = "UPDATE training_system.category SET name = ?, description = ? WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             connection.setAutoCommit(false);
@@ -72,7 +71,7 @@ public class CategoryDAO implements GenericDao<Category, Long> {
 
     @Override
     public Set<Category> list() throws DAOException {
-        String sql = "SELECT * FROM category";
+        String sql = "SELECT * FROM training_system.category";
         Set<Category> categories = new HashSet<>();
 
         try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
@@ -85,19 +84,38 @@ public class CategoryDAO implements GenericDao<Category, Long> {
         return categories;
     }
 
+    @Override
+    public Category search(Long aLong) throws DAOException {
+        String sql = "SELECT * FROM training_system.category WHERE id = ?";
+        Category category = null;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, aLong);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    category = new Category(rs.getLong("id"), rs.getString("name"), rs.getString("description"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error al buscar la categoría", e);
+        }
+        return category;
+    }
+
 
     @Override
     public boolean delete(Long id) throws DAOException {
-        String sql = "DELETE FROM category WHERE id = ?";
+        String sql = "DELETE FROM training_system.category WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             connection.setAutoCommit(false);
 
             stmt.setLong(1, id);
-            stmt.executeUpdate();
+
+            int rowsAffected = stmt.executeUpdate();
 
             connection.commit();
-            return true;
+            return rowsAffected  > 0;
         } catch (SQLException e) {
             try {
                 connection.rollback();

@@ -42,6 +42,15 @@ public class NoteController implements GenericController<Note, Long> {
     }
 
     @Override
+    public Note search(Long aLong) throws ControllerException {
+        try {
+            return noteDAO.search(aLong);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al buscar la nota", e);
+        }
+    }
+
+    @Override
     public Note update(Note entity) throws ControllerException {
         try {
             return noteDAO.update(entity);
