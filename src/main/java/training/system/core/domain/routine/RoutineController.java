@@ -70,9 +70,9 @@ public class RoutineController implements GenericController<Routine, Long>, IRou
     }
 
     @Override
-    public Routine createRoutineForClient(Routine routine, User client, User trainer) throws ControllerException {
+    public Routine createRoutineForClient(Routine routine) throws ControllerException {
         try {
-            return routineDAO.createRoutineForClient(routine, client, trainer);
+            return routineDAO.createRoutineForClient(routine);
         } catch (DAOException e) {
             throw new ControllerException("Error al crear la rutina para el cliente", e);
         }

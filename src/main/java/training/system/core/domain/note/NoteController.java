@@ -1,5 +1,6 @@
 package training.system.core.domain.note;
 
+import training.system.core.domain.user.User;
 import training.system.core.exception.ControllerException;
 import training.system.core.exception.DAOException;
 import training.system.core.exception.DatabaseConnectionException;
@@ -8,7 +9,7 @@ import training.system.core.generic.GenericController;
 
 import java.util.Set;
 
-public class NoteController implements GenericController<Note, Long> {
+public class NoteController implements GenericController<Note, Long>, INote {
 
     private final NoteDAO noteDAO;
 
@@ -65,6 +66,24 @@ public class NoteController implements GenericController<Note, Long> {
             return noteDAO.delete(id);
         } catch (DAOException e) {
             throw new ControllerException("Error al eliminar la nota", e);
+        }
+    }
+
+    @Override
+    public Note createNoteForClient(Note note) throws ControllerException {
+        try {
+            return noteDAO.createNoteForClient(note);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al crear la nota", e);
+        }
+    }
+
+    @Override
+    public Set<Note> listUserNotes(User user) throws ControllerException {
+        try {
+            return noteDAO.listUserNotes(user);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al listar las notas del usuario", e);
         }
     }
 }

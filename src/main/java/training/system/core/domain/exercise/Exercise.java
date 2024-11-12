@@ -83,6 +83,10 @@ public class Exercise {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -129,6 +133,14 @@ public class Exercise {
 
     public User getTrainer() {
         return trainer;
+    }
+
+    public Category[] getCategories() {
+        return categories.toArray(new Category[0]);
+    }
+
+    public void addCategory(Category category) {
+        categories.add(category);
     }
 
     @Override

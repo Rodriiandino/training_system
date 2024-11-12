@@ -1,5 +1,6 @@
 package training.system.core.domain.progress;
 
+import training.system.core.domain.user.User;
 import training.system.core.exception.ControllerException;
 import training.system.core.exception.DAOException;
 import training.system.core.exception.DatabaseConnectionException;
@@ -8,7 +9,7 @@ import training.system.core.generic.GenericController;
 
 import java.util.Set;
 
-public class ProgressController implements GenericController<Progress, Long> {
+public class ProgressController implements GenericController<Progress, Long>, IProgress {
 
     private final ProgressDAO progressDAO;
 
@@ -65,6 +66,24 @@ public class ProgressController implements GenericController<Progress, Long> {
             return progressDAO.delete(id);
         } catch (DAOException e) {
             throw new ControllerException("Error al eliminar el progreso", e);
+        }
+    }
+
+    @Override
+    public Progress createProgressForClient(Progress progress) throws ControllerException {
+        try {
+            return progressDAO.createProgressForClient(progress);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al crear el progreso para el cliente", e);
+        }
+    }
+
+    @Override
+    public Set<Progress> listUserProgress(User user) throws ControllerException {
+        try {
+            return progressDAO.listUserProgress(user);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al listar los progresos del usuario", e);
         }
     }
 }

@@ -21,7 +21,7 @@ INSERT INTO Role (role_name) VALUES ('ROLE_USER'), ('ROLE_ADMINISTRATOR'), ('ROL
 
 CREATE TABLE IF NOT EXISTS Gym (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) unique NOT NULL,
     address VARCHAR(255)
 );
 
@@ -282,6 +282,43 @@ WHERE n.user_id = 1;
 SELECT e.name, e.description
     FROM Exercise e
 WHERE e.is_predefined = TRUE;
+
+SELECT e.id, e.name, e.description, e.explanation, e.demo_video_url, c.id, c.name, c.description
+FROM exercise e
+    left JOIN exercise_category ec ON e.id = ec.exercise_id
+    left JOIN category c ON ec.category_id = c.id;
+
+SELECT
+    e.id AS exercise_id,
+    e.name AS exercise_name,
+    e.description AS exercise_description,
+    e.explanation,
+    e.demo_video_url,
+    c.id AS category_id,
+    c.name AS category_name,
+    c.description AS category_description
+FROM training_system.exercise e
+         JOIN training_system.exercise_category ec ON e.id = ec.exercise_id
+         JOIN training_system.category c ON ec.category_id = c.id
+WHERE e.id = 5;
+
+SELECT
+    n.id AS note_id,
+    n.title AS note_title,
+    n.content AS note_content,
+    n.purpose AS note_purpose,
+    n.note_date AS note_date,
+    u.id AS user_id,
+    p.first_name AS user_first_name,
+    p.last_name AS user_last_name,
+    u2.id AS trainer_id,
+    p2.first_name AS trainer_first_name,
+    p2.last_name AS trainer_last_name
+FROM training_system.note n
+         LEFT JOIN training_system.user u ON n.user_id = u.id
+         LEFT JOIN training_system.person p ON u.id = p.id
+         LEFT JOIN training_system.user u2 ON n.trainer_id = u2.id
+         LEFT JOIN training_system.person p2 ON u2.id = p2.id;
 
 -- Eliminar datos de prueba
 -- Eliminar notas

@@ -5,12 +5,10 @@ import training.system.core.exception.DAOException;
 import training.system.core.generic.GenericDao;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-public class GymDAO implements GenericDao<Gym, Long> {
+public class GymDAO implements GenericDao<Gym, Long>, IGym {
 
     Connection connection;
 
@@ -20,38 +18,40 @@ public class GymDAO implements GenericDao<Gym, Long> {
 
     @Override
     public Gym create(Gym entity) throws DAOException {
-        String sql = "INSERT INTO training_system.gym (name, address) VALUES (?, ?)";
-        User manager = entity.getManagers().iterator().next();
-        String sqlManager = "UPDATE training_system.user SET gym_admin_id = ? WHERE id = ?";
+        String INSERT_GYM = "INSERT INTO training_system.gym (name, address) VALUES (?, ?)";
+        String UPDATE_MANAGER = "UPDATE training_system.user SET gym_admin_id = ? WHERE id = ?";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try {
             connection.setAutoCommit(false);
 
-            stmt.setString(1, entity.getName());
-            stmt.setString(2, entity.getAddress());
-            stmt.executeUpdate();
+            try (PreparedStatement stmt = connection.prepareStatement(INSERT_GYM, Statement.RETURN_GENERATED_KEYS)) {
+                stmt.setString(1, entity.getName());
+                stmt.setString(2, entity.getAddress());
+                stmt.executeUpdate();
 
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    entity.setId(rs.getLong(1));
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        entity.setId(rs.getLong(1));
+                    }
                 }
             }
 
-            try (PreparedStatement stmtManager = connection.prepareStatement(sqlManager)) {
-                stmtManager.setLong(1, entity.getId());
-                stmtManager.executeUpdate();
+            User manager = entity.getManagers().iterator().next();
+            try (PreparedStatement stmt = connection.prepareStatement(UPDATE_MANAGER)) {
+                stmt.setLong(1, entity.getId());
+                stmt.setLong(2, manager.getId());
+                stmt.executeUpdate();
             }
 
             connection.commit();
-
             return entity;
         } catch (SQLException e) {
             try {
                 connection.rollback();
             } catch (SQLException rollbackEx) {
-                throw new DAOException("error durante el rollback", rollbackEx);
+                throw new DAOException("Error durante el rollback", rollbackEx);
             }
-            throw new DAOException("error al crear el gimnasio", e);
+            throw new DAOException("Error creando el gimnasio", e);
         }
     }
 
@@ -68,7 +68,6 @@ public class GymDAO implements GenericDao<Gym, Long> {
             stmt.executeUpdate();
 
             connection.commit();
-
             return entity;
         } catch (SQLException e) {
             try {
@@ -141,5 +140,50 @@ public class GymDAO implements GenericDao<Gym, Long> {
             }
             throw new DAOException("error al eliminar el gimnasio", e);
         }
+    }
+
+    @Override
+    public void addClientToGym(String gymName, String clientEmail) throws DAOException {
+
+    }
+
+    @Override
+    public void removeClientFromGym(String gymName, String clientEmail) throws DAOException {
+
+    }
+
+    @Override
+    public void addTrainerToGym(String gymName, String clientEmail) throws DAOException {
+
+    }
+
+    @Override
+    public void removeTrainerFromGym(String gymName, String clientEmail) throws DAOException {
+
+    }
+
+    @Override
+    public void addManagerToGym(String gymName, String clientEmail) throws DAOException {
+
+    }
+
+    @Override
+    public void removeManagerFromGym(String gymName, String clientEmail) throws DAOException {
+
+    }
+
+    @Override
+    public Set<User> listGymClients(String gymName) throws DAOException {
+        return Set.of();
+    }
+
+    @Override
+    public Set<User> listGymTrainers(String gymName) throws DAOException {
+        return Set.of();
+    }
+
+    @Override
+    public Set<User> listGymManagers(String gymName) throws DAOException {
+        return Set.of();
     }
 }

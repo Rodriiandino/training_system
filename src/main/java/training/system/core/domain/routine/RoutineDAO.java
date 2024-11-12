@@ -41,7 +41,7 @@ public class RoutineDAO implements GenericDao<Routine, Long>, IRoutine {
     }
 
     @Override
-    public Routine createRoutineForClient(Routine routine, User client, User trainer) throws DAOException {
+    public Routine createRoutineForClient(Routine routine) throws DAOException {
         return null;
     }
 

@@ -1,5 +1,6 @@
 package training.system.core.domain.exercise;
 
+import training.system.core.domain.user.User;
 import training.system.core.exception.ControllerException;
 import training.system.core.exception.DAOException;
 import training.system.core.exception.DatabaseConnectionException;
@@ -8,7 +9,7 @@ import training.system.core.generic.GenericController;
 
 import java.util.Set;
 
-public class ExerciseController implements GenericController<Exercise, Long> {
+public class ExerciseController implements GenericController<Exercise, Long>, IExercise {
 
     private final ExerciseDAO exerciseDAO;
 
@@ -65,6 +66,24 @@ public class ExerciseController implements GenericController<Exercise, Long> {
             return exerciseDAO.delete(id);
         } catch (DAOException e) {
             throw new ControllerException("Error al eliminar el ejercicio", e);
+        }
+    }
+
+    @Override
+    public Exercise createExerciseForClient(Exercise exercise) throws ControllerException {
+        try {
+            return exerciseDAO.createExerciseForClient(exercise);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al crear el ejercicio para el cliente", e);
+        }
+    }
+
+    @Override
+    public Set<Exercise> listUserExercises(User user) throws ControllerException {
+        try {
+            return exerciseDAO.listUserExercises(user);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al listar los ejercicios del usuario", e);
         }
     }
 }
