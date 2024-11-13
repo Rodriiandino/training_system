@@ -12,9 +12,16 @@ public class Exercise {
     private String explanation;
     private String videoUrl;
     private boolean isPredefined;
-    private final Set<Category> categories;
+    private Set<Category> categories;
     private User user;
     private User trainer;
+
+
+    public Exercise(Long id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
 
     public Exercise(String name, String description, String explanation, String videoUrl, boolean isPredefined, Set<Category> categories) {
         this.name = name;
@@ -135,8 +142,8 @@ public class Exercise {
         return trainer;
     }
 
-    public Category[] getCategories() {
-        return categories.toArray(new Category[0]);
+    public Set<Category> getCategories() {
+        return categories;
     }
 
     public void addCategory(Category category) {

@@ -288,6 +288,11 @@ FROM exercise e
     left JOIN exercise_category ec ON e.id = ec.exercise_id
     left JOIN category c ON ec.category_id = c.id;
 
+SELECT r.id, r.name, r.description, r.user_id, per.email
+FROM training_system.routine r
+         LEFT JOIN training_system.user u ON r.user_id = u.id
+         LEFT JOIN training_system.person per ON u.id = per.id;
+
 SELECT
     e.id AS exercise_id,
     e.name AS exercise_name,
@@ -301,6 +306,13 @@ FROM training_system.exercise e
          JOIN training_system.exercise_category ec ON e.id = ec.exercise_id
          JOIN training_system.category c ON ec.category_id = c.id
 WHERE e.id = 5;
+
+SELECT r.id, r.name, r.description, per.email, ex.id, ex.name, ex.description
+FROM training_system.routine r
+         LEFT JOIN training_system.user u ON r.user_id = u.id
+         LEFT JOIN training_system.person per ON u.id = per.id
+         LEFT JOIN training_system.routine_exercise re ON r.id = re.routine_id
+         LEFT JOIN training_system.exercise ex ON re.exercise_id = ex.id;
 
 SELECT
     n.id AS note_id,
@@ -319,6 +331,68 @@ FROM training_system.note n
          LEFT JOIN training_system.person p ON u.id = p.id
          LEFT JOIN training_system.user u2 ON n.trainer_id = u2.id
          LEFT JOIN training_system.person p2 ON u2.id = p2.id;
+
+SELECT p.id, p.progress_date, p.repetitions, p.weight, p.time, per.email, e.name
+FROM training_system.progress p
+         LEFT JOIN training_system.user u ON p.user_id = u.id
+         LEFT JOIN training_system.person per ON u.id = per.id
+         LEFT JOIN training_system.exercise e ON p.exercise_id = e.id;
+
+
+SELECT
+    e.id AS exercise_id,
+    e.name AS exercise_name,
+    e.description AS exercise_description,
+    e.explanation,
+    e.demo_video_url,
+    e.is_predefined,
+    c.id AS category_id,
+    c.name AS category_name,
+    c.description AS category_description,
+    e.trainer_id,
+    pt.email AS trainer_email
+FROM training_system.exercise e
+         LEFT JOIN training_system.exercise_category ec ON e.id = ec.exercise_id
+         LEFT JOIN training_system.category c ON ec.category_id = c.id
+         LEFT JOIN training_system.user t ON e.trainer_id = t.id
+         LEFT JOIN training_system.person pt ON t.id = pt.id
+WHERE e.user_id = ? OR e.is_predefined = TRUE;
+
+SELECT
+    p.id,
+    p.progress_date,
+    p.repetitions,
+    p.weight,
+    p.time,
+    t.id,
+    t.first_name,
+    t.email,
+    e.id,
+    e.name,
+    e.description
+FROM training_system.progress p
+         LEFT JOIN training_system.user u ON p.trainer_id = u.id
+         LEFT JOIN training_system.person t ON u.id = t.id
+         LEFT JOIN training_system.exercise e ON p.exercise_id = e.id
+WHERE p.user_id = ?;
+
+SELECT
+    e.id AS exercise_id,
+    e.name AS exercise_name,
+    e.description AS exercise_description,
+    e.explanation,
+    e.demo_video_url,
+    p.id,
+    p.first_name,
+    p.email,
+    c.id AS category_id,
+    c.name AS category_name,
+    c.description AS category_description
+FROM training_system.exercise e
+         LEFT JOIN training_system.user u ON e.user_id = u.id
+         LEFT JOIN training_system.person p ON u.id = p.id
+         LEFT JOIN training_system.exercise_category ec ON e.id = ec.exercise_id
+         LEFT JOIN training_system.category c ON ec.category_id = c.id;
 
 -- Eliminar datos de prueba
 -- Eliminar notas

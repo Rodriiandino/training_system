@@ -11,13 +11,20 @@ public class Routine {
     private String description;
     private final User user;
     private User trainer;
-    private final Set<Exercise> exercises;
+    private Set<Exercise> exercises;
 
     public Routine(String name, String description, User user, Set<Exercise> exercises) {
         this.name = name;
         this.description = description;
         this.user = user;
         this.exercises = exercises;
+    }
+
+    public Routine(Long id, String name, String description, User user) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.user = user;
     }
 
     public Routine(String name, String description, User user, User trainer, Set<Exercise> exercises) {
@@ -47,6 +54,10 @@ public class Routine {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

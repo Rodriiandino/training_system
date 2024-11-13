@@ -59,6 +59,10 @@ public class Progress {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Date getProgressDate() {
         return progressDate;
     }

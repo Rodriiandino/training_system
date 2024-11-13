@@ -31,6 +31,11 @@ public class User extends Person {
      */
     private Set<User> trainers = new HashSet<>();
 
+
+    public User() {
+        super();
+    }
+
     public User(String name, String lastName, String email, String password) {
         super(name, lastName, email, password);
         this.roles.add(new Role(RoleEnum.ROLE_USER));
