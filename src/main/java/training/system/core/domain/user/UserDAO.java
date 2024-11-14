@@ -217,4 +217,22 @@ public class UserDAO implements GenericDao<User, Long>, IUser {
             throw new DAOException("error al asignar el rol de administrador", e);
         }
     }
+
+    @Override
+    public boolean isEmailAlreadyRegistered(String email) throws DAOException {
+        String sql = "SELECT * FROM training_system.person WHERE email = ?";
+        boolean isEmailAlreadyRegistered = false;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, email);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                isEmailAlreadyRegistered = rs.next();
+            }
+        } catch (SQLException e) {
+            throw new DAOException("error al verificar si el email ya está registrado", e);
+        }
+
+        return isEmailAlreadyRegistered;
+    }
 }

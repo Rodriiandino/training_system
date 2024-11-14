@@ -94,4 +94,13 @@ public class UserController implements GenericController<User, Long>, IUser {
             throw new ControllerException("Error al convertirse en administrador", e);
         }
     }
+
+    @Override
+    public boolean isEmailAlreadyRegistered(String email) throws ControllerException {
+        try {
+            return userDAO.isEmailAlreadyRegistered(email);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al verificar si el correo electrónico ya está registrado", e);
+        }
+    }
 }

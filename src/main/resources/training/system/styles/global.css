@@ -1,0 +1,71 @@
+.background-primary {
+    -fx-background-color: #FBF7EA;
+}
+
+.background-secondary {
+    -fx-background-color: #1F1E1C;
+}
+
+
+.input {
+    -fx-background-color: transparent;
+    -fx-border-color: #1F1E1C;
+    -fx-border-width: 0 0 2 0;
+    -fx-text-fill: #1F1E1C;
+    -fx-font-family: "Segoe UI";
+}
+
+Button {
+    -fx-background-color: #1F1E1C;
+    -fx-text-fill: #FBF7EA;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 18px;
+    -fx-border-radius: 15 15 15 15;
+    -fx-background-radius: 15 15 15 15;
+    -fx-cursor: hand;
+}
+
+.button-secondary {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 18px;
+    -fx-cursor: hand;
+}
+
+.button-third {
+    -fx-background-color: rgba(255, 255, 255, 0);
+    -fx-text-fill: #6e6e6e;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 18px;
+    -fx-cursor: hand;
+}
+
+.button-third:hover {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000;
+}
+
+Button:hover {
+    -fx-background-color: #2a2a27;
+    -fx-font-size: 19px;
+}
+
+
+.button-secondary:pressed {
+    -fx-background-color: #e0e0e0;
+}
+
+
+.text {
+    -fx-text-fill: #1F1E1C;
+    -fx-font-weight: 800;
+    -fx-font-family: "Segoe UI";
+}
+
+.text-secondary {
+    -fx-text-fill: #FBF7EA;
+    -fx-font-weight: 800;
+    -fx-font-family: "Segoe UI";
+    -fx-alignment: center;
+}

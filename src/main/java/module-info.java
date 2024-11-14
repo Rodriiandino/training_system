@@ -6,7 +6,15 @@ module training.system {
 
 
     opens training.system to javafx.fxml;
+    opens training.system.viewController to javafx.fxml;
     exports training.system;
+    exports training.system.core.domain.user;
     exports training.system.core.domain.routine;
-    opens training.system.core.domain.routine to javafx.fxml;
+    exports training.system.core.domain.exercise;
+    exports training.system.core.domain.note;
+    exports training.system.core.domain.gym;
+    exports training.system.core.domain.category;
+    exports training.system.core.domain.progress;
+    exports training.system.viewController;
+    exports training.system.utils;
 }
