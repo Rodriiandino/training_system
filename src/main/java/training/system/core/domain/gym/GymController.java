@@ -70,81 +70,81 @@ public class GymController implements GenericController<Gym, Long>, IGym {
     }
 
     @Override
-    public void addClientToGym(String gymName, String clientEmail) throws ControllerException {
+    public void addClientToGym(Long id, String clientEmail) throws ControllerException {
         try {
-            gymDAO.addClientToGym(gymName, clientEmail);
+            gymDAO.addClientToGym(id, clientEmail);
         } catch (DAOException e) {
             throw new ControllerException("Error al agregar el cliente al gimnasio", e);
         }
     }
 
     @Override
-    public void removeClientFromGym(String gymName, String clientEmail) throws ControllerException {
+    public void removeClientFromGym(Long id, String clientEmail) throws ControllerException {
         try {
-            gymDAO.removeClientFromGym(gymName, clientEmail);
+            gymDAO.removeClientFromGym(id, clientEmail);
         } catch (DAOException e) {
             throw new ControllerException("Error al eliminar el cliente del gimnasio", e);
         }
     }
 
     @Override
-    public void addTrainerToGym(String gymName, String clientEmail) throws ControllerException {
+    public void addTrainerToGym(Long id, String clientEmail) throws ControllerException {
         try {
-            gymDAO.addTrainerToGym(gymName, clientEmail);
+            gymDAO.addTrainerToGym(id, clientEmail);
         } catch (DAOException e) {
             throw new ControllerException("Error al agregar el entrenador al gimnasio", e);
         }
     }
 
     @Override
-    public void removeTrainerFromGym(String gymName, String clientEmail) throws ControllerException {
+    public void removeTrainerFromGym(Long id, String clientEmail) throws ControllerException {
         try {
-            gymDAO.removeTrainerFromGym(gymName, clientEmail);
+            gymDAO.removeTrainerFromGym(id, clientEmail);
         } catch (DAOException e) {
             throw new ControllerException("Error al eliminar el entrenador del gimnasio", e);
         }
     }
 
     @Override
-    public void addManagerToGym(String gymName, String clientEmail) throws ControllerException {
+    public void addManagerToGym(Long id, String clientEmail) throws ControllerException {
         try {
-            gymDAO.addManagerToGym(gymName, clientEmail);
+            gymDAO.addManagerToGym(id, clientEmail);
         } catch (DAOException e) {
             throw new ControllerException("Error al agregar el gerente al gimnasio", e);
         }
     }
 
     @Override
-    public void removeManagerFromGym(String gymName, String clientEmail) throws ControllerException {
+    public void removeManagerFromGym(Long id, String clientEmail) throws ControllerException {
         try {
-            gymDAO.removeManagerFromGym(gymName, clientEmail);
+            gymDAO.removeManagerFromGym(id, clientEmail);
         } catch (DAOException e) {
             throw new ControllerException("Error al eliminar el gerente del gimnasio", e);
         }
     }
 
     @Override
-    public Set<User> listGymClients(String gymName) throws ControllerException {
+    public Set<User> listGymClients(Long id) throws ControllerException {
         try {
-            return gymDAO.listGymClients(gymName);
+            return gymDAO.listGymClients(id);
         } catch (DAOException e) {
             throw new ControllerException("Error al listar los clientes del gimnasio", e);
         }
     }
 
     @Override
-    public Set<User> listGymTrainers(String gymName) throws ControllerException {
+    public Set<User> listGymTrainers(Long id) throws ControllerException {
         try {
-            return gymDAO.listGymTrainers(gymName);
+            return gymDAO.listGymTrainers(id);
         } catch (DAOException e) {
             throw new ControllerException("Error al listar los entrenadores del gimnasio", e);
         }
     }
 
     @Override
-    public Set<User> listGymManagers(String gymName) throws ControllerException {
+    public Set<User> listGymManagers(Long id) throws ControllerException {
         try {
-            return gymDAO.listGymManagers(gymName);
+            return gymDAO.listGymManagers(id);
         } catch (DAOException e) {
             throw new ControllerException("Error al listar los gerentes del gimnasio", e);
         }

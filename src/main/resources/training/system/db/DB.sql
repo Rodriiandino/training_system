@@ -394,6 +394,21 @@ FROM training_system.exercise e
          LEFT JOIN training_system.exercise_category ec ON e.id = ec.exercise_id
          LEFT JOIN training_system.category c ON ec.category_id = c.id;
 
+SELECT p.id, first_name, last_name, email
+FROM training_system.user u
+         LEFT JOIN training_system.person p ON u.id = p.id
+WHERE u.gym_train_id = ?;
+
+SELECT p.id, first_name, last_name, email
+FROM training_system.gym_worker_user g
+         LEFT JOIN training_system.person p ON g.user_id = p.id
+WHERE g.gym_id = ?;
+
+SELECT p.id, first_name, last_name, email
+FROM training_system.user u
+         LEFT JOIN training_system.person p ON u.id = p.id
+WHERE u.gym_admin_id = ?;
+
 -- Eliminar datos de prueba
 -- Eliminar notas
 DELETE FROM Note WHERE user_id = 1;

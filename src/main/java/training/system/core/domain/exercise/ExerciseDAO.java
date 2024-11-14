@@ -70,9 +70,12 @@ public class ExerciseDAO implements GenericDao<Exercise, Long>, IExercise {
     @Override
     public Exercise update(Exercise entity) throws DAOException {
         String sql = """
-                    UPDATE training_system.exercise
-                    SET name = ?, description = ?, explanation = ?, demo_video_url = ?
-                    WHERE id = ?
+                UPDATE training_system.exercise
+                SET name = ?,
+                    description = ?,
+                    explanation = ?,
+                    demo_video_url = ?
+                WHERE id = ?
                 """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -129,12 +132,17 @@ public class ExerciseDAO implements GenericDao<Exercise, Long>, IExercise {
                 Exercise exercise = exerciseMap.get(exerciseId);
 
                 if (exercise == null) {
-                    User user = new User();
-                    user.setId(rs.getLong("p.id"));
-                    user.setName(rs.getString("p.first_name"));
-                    user.setEmail(rs.getString("p.email"));
-                    exercise = new Exercise(exerciseId, rs.getString("exercise_name"), rs.getString("exercise_description"), rs.getString("explanation"), rs.getString("demo_video_url"), true, new HashSet<>(), user);
-                    exerciseMap.put(exerciseId, exercise);
+                    if (rs.getLong("p.id") != 0) {
+                        User user = new User();
+                        user.setId(rs.getLong("p.id"));
+                        user.setName(rs.getString("p.first_name"));
+                        user.setEmail(rs.getString("p.email"));
+                        exercise = new Exercise(exerciseId, rs.getString("exercise_name"), rs.getString("exercise_description"), rs.getString("explanation"), rs.getString("demo_video_url"), true, new HashSet<>(), user);
+                        exerciseMap.put(exerciseId, exercise);
+                    } else {
+                        exercise = new Exercise(exerciseId, rs.getString("exercise_name"), rs.getString("exercise_description"), rs.getString("explanation"), rs.getString("demo_video_url"), true, new HashSet<>());
+                        exerciseMap.put(exerciseId, exercise);
+                    }
                 }
 
                 Category category = new Category(rs.getLong("category_id"), rs.getString("category_name"), rs.getString("category_description"));
@@ -169,7 +177,7 @@ public class ExerciseDAO implements GenericDao<Exercise, Long>, IExercise {
                 LEFT JOIN training_system.user u ON e.user_id = u.id
                 LEFT JOIN training_system.person p ON u.id = p.id
                 LEFT JOIN training_system.user u2 ON e.trainer_id = u2.id
-                LEFT JOIN training_system.person p2 ON u2.id = p2.id    
+                LEFT JOIN training_system.person p2 ON u2.id = p2.id
                 LEFT JOIN training_system.exercise_category ec ON e.id = ec.exercise_id
                 LEFT JOIN training_system.category c ON ec.category_id = c.id
                 WHERE e.id = ?
@@ -182,19 +190,23 @@ public class ExerciseDAO implements GenericDao<Exercise, Long>, IExercise {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     if (exercise == null) {
-                        User user = new User();
-                        user.setId(rs.getLong("p.id"));
-                        user.setName(rs.getString("p.first_name"));
-                        user.setEmail(rs.getString("p.email"));
+                        if (rs.getLong("p.id") != 0) {
+                            User user = new User();
+                            user.setId(rs.getLong("p.id"));
+                            user.setName(rs.getString("p.first_name"));
+                            user.setEmail(rs.getString("p.email"));
 
-                        if (rs.getLong("trainer_id") != 0) {
-                            User trainer = new User();
-                            trainer.setId(rs.getLong("trainer_id"));
-                            trainer.setName(rs.getString("trainer_first_name"));
-                            trainer.setEmail(rs.getString("trainer_email"));
-                            exercise = new Exercise(rs.getLong("exercise_id"), rs.getString("exercise_name"), rs.getString("exercise_description"), rs.getString("explanation"), rs.getString("demo_video_url"), true, new HashSet<>(), user, trainer);
+                            if (rs.getLong("trainer_id") != 0) {
+                                User trainer = new User();
+                                trainer.setId(rs.getLong("trainer_id"));
+                                trainer.setName(rs.getString("trainer_first_name"));
+                                trainer.setEmail(rs.getString("trainer_email"));
+                                exercise = new Exercise(rs.getLong("exercise_id"), rs.getString("exercise_name"), rs.getString("exercise_description"), rs.getString("explanation"), rs.getString("demo_video_url"), true, new HashSet<>(), user, trainer);
+                            } else {
+                                exercise = new Exercise(rs.getLong("exercise_id"), rs.getString("exercise_name"), rs.getString("exercise_description"), rs.getString("explanation"), rs.getString("demo_video_url"), true, new HashSet<>(), user);
+                            }
                         } else {
-                            exercise = new Exercise(rs.getLong("exercise_id"), rs.getString("exercise_name"), rs.getString("exercise_description"), rs.getString("explanation"), rs.getString("demo_video_url"), true, new HashSet<>(), user);
+                            exercise = new Exercise(rs.getLong("exercise_id"), rs.getString("exercise_name"), rs.getString("exercise_description"), rs.getString("explanation"), rs.getString("demo_video_url"), true, new HashSet<>());
                         }
                     }
 

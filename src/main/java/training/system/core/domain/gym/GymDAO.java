@@ -143,47 +143,173 @@ public class GymDAO implements GenericDao<Gym, Long>, IGym {
     }
 
     @Override
-    public void addClientToGym(String gymName, String clientEmail) throws DAOException {
+    public void addClientToGym(Long gymId, String clientEmail) throws DAOException {
+        String updateUserSql = "UPDATE training_system.user SET gym_train_id = ? WHERE id = (SELECT id FROM training_system.person WHERE email = ?)";
 
+        try {
+            try (PreparedStatement stmt = connection.prepareStatement(updateUserSql)) {
+                stmt.setLong(1, gymId);
+                stmt.setString(2, clientEmail);
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new DAOException("Añaadir cliente al gimnasio falló, no se afectaron filas.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error añadiendo cliente al gimnasio", e);
+        }
     }
 
     @Override
-    public void removeClientFromGym(String gymName, String clientEmail) throws DAOException {
+    public void removeClientFromGym(Long gymId, String clientEmail) throws DAOException {
+        String updateUserSql = "UPDATE training_system.user SET gym_train_id = NULL WHERE id = (SELECT id FROM training_system.person WHERE email = ?) AND gym_train_id = ?";
 
+        try {
+            try (PreparedStatement stmt = connection.prepareStatement(updateUserSql)) {
+                stmt.setString(1, clientEmail);
+                stmt.setLong(2, gymId);
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new DAOException("Remover cliente del gimnasio falló, no se afectaron filas.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error removiendo cliente del gimnasio", e);
+        }
     }
 
     @Override
-    public void addTrainerToGym(String gymName, String clientEmail) throws DAOException {
+    public void addTrainerToGym(Long gymId, String trainerEmail) throws DAOException {
+        String updateUserSql = "INSERT INTO training_system.gym_worker_user (gym_id, user_id) VALUES (?, (SELECT id FROM training_system.person WHERE email = ?))";
 
+        try {
+            try (PreparedStatement stmt = connection.prepareStatement(updateUserSql)) {
+                stmt.setString(1, trainerEmail);
+                stmt.setLong(2, gymId);
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new DAOException("Añadir entrenador al gimnasio falló, no se afectaron filas.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error añadiendo entrenador al gimnasio", e);
+        }
     }
 
     @Override
-    public void removeTrainerFromGym(String gymName, String clientEmail) throws DAOException {
+    public void removeTrainerFromGym(Long gymId, String trainerEmail) throws DAOException {
+        String updateUserSql = "DELETE FROM training_system.gym_worker_user WHERE user_id = (SELECT id FROM training_system.person WHERE email = ?) AND gym_id = ?";
 
+        try {
+            try (PreparedStatement stmt = connection.prepareStatement(updateUserSql)) {
+                stmt.setString(1, trainerEmail);
+                stmt.setLong(2, gymId);
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new DAOException("Remover entrenador del gimnasio falló, no se afectaron filas.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error removiendo entrenador del gimnasio", e);
+        }
     }
 
     @Override
-    public void addManagerToGym(String gymName, String clientEmail) throws DAOException {
+    public void addManagerToGym(Long gymId, String managerEmail) throws DAOException {
+        String updateUserSql = "UPDATE training_system.user SET gym_admin_id = ? WHERE id = (SELECT id FROM training_system.person WHERE email = ?)";
 
+        try {
+            try (PreparedStatement stmt = connection.prepareStatement(updateUserSql)) {
+                stmt.setLong(1, gymId);
+                stmt.setString(2, managerEmail);
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new DAOException("Añadir gerente al gimnasio falló, no se afectaron filas.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error añadiendo gerente al gimnasio", e);
+        }
     }
 
     @Override
-    public void removeManagerFromGym(String gymName, String clientEmail) throws DAOException {
+    public void removeManagerFromGym(Long gymId, String managerEmail) throws DAOException {
+        String updateUserSql = "UPDATE training_system.user SET gym_admin_id = NULL WHERE id = (SELECT id FROM training_system.person WHERE email = ?) AND gym_admin_id = ?";
 
+        try {
+            try (PreparedStatement stmt = connection.prepareStatement(updateUserSql)) {
+                stmt.setString(1, managerEmail);
+                stmt.setLong(2, gymId);
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new DAOException("Remover gerente del gimnasio falló, no se afectaron filas.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error removiendo gerente del gimnasio", e);
+        }
     }
 
     @Override
-    public Set<User> listGymClients(String gymName) throws DAOException {
-        return Set.of();
+    public Set<User> listGymClients(Long id) throws DAOException {
+        String sql = "SELECT p.id, first_name, last_name, email FROM training_system.user u LEFT JOIN training_system.person p ON u.id = p.id WHERE u.gym_train_id = ?";
+
+        Set<User> clients = new HashSet<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    User client = new User(rs.getLong("p.id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"));
+                    clients.add(client);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error al listar los clientes del gimnasio", e);
+        }
+
+        return clients;
     }
 
     @Override
-    public Set<User> listGymTrainers(String gymName) throws DAOException {
-        return Set.of();
+    public Set<User> listGymTrainers(Long id) throws DAOException {
+        String sql = "SELECT p.id, first_name, last_name, email FROM training_system.gym_worker_user g LEFT JOIN training_system.person p ON g.user_id = p.id WHERE g.gym_id = ?";
+
+        Set<User> trainers = new HashSet<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    User trainer = new User(rs.getLong("p.id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"));
+                    trainers.add(trainer);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error al listar los entrenadores del gimnasio", e);
+        }
+
+        return trainers;
     }
 
     @Override
-    public Set<User> listGymManagers(String gymName) throws DAOException {
-        return Set.of();
+    public Set<User> listGymManagers(Long id) throws DAOException {
+        String sql = "SELECT p.id, first_name, last_name, email FROM training_system.user u LEFT JOIN training_system.person p ON u.id = p.id WHERE u.gym_admin_id = ?";
+
+        Set<User> managers = new HashSet<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    User manager = new User(rs.getLong("p.id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"));
+                    managers.add(manager);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error al listar los gerentes del gimnasio", e);
+        }
+
+        return managers;
     }
 }

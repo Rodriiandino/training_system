@@ -1,7 +1,7 @@
 package training.system.core.domain.user;
 
 public interface IUser {
-    boolean authenticate(String email, String password) throws Exception;
-    void becomeTrainer() throws Exception;
-    void becomeAdministrator() throws Exception;
+    User authenticate(String email, String password) throws Exception;
+    void becomeTrainer(Long id) throws Exception;
+    void becomeAdministrator(Long id) throws Exception;
 }

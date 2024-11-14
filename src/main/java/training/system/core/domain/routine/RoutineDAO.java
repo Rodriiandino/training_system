@@ -233,11 +233,97 @@ public class RoutineDAO implements GenericDao<Routine, Long>, IRoutine {
 
     @Override
     public Routine createRoutineForClient(Routine routine) throws DAOException {
-        return null;
+        String INSERT_ROUTINE = """
+                INSERT INTO training_system.routine (name, description, user_id, trainer_id)
+                VALUES (?, ?, ?, ?)
+                """;
+        String INSERT_ROUTINE_EXERCISE = """
+                INSERT INTO training_system.routine_exercise (routine_id, exercise_id)
+                VALUES (?, ?)
+                """;
+
+        try {
+            connection.setAutoCommit(false);
+
+            try (PreparedStatement stmt = connection.prepareStatement(INSERT_ROUTINE, Statement.RETURN_GENERATED_KEYS)) {
+                stmt.setString(1, routine.getName());
+                stmt.setString(2, routine.getDescription());
+                stmt.setLong(3, routine.getUser().getId());
+                stmt.setLong(4, routine.getTrainer().getId());
+                stmt.executeUpdate();
+
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        routine.setId(rs.getLong(1));
+                    }
+                }
+            }
+
+            for (Exercise exercise : routine.getExercises()) {
+                try (PreparedStatement stmt = connection.prepareStatement(INSERT_ROUTINE_EXERCISE)) {
+                    stmt.setLong(1, routine.getId());
+                    stmt.setLong(2, exercise.getId());
+                    stmt.executeUpdate();
+                }
+            }
+
+            connection.commit();
+            return routine;
+
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                throw new DAOException("Error durante el rollback de la rutina", rollbackEx);
+            }
+            throw new DAOException("Error creando la rutina", e);
+        }
     }
 
     @Override
     public Set<Routine> listUserRoutines(User user) throws DAOException {
-        return Set.of();
+        String sql = """
+                SELECT r.id, r.name, r.description, t.id, t.first_name, t.email
+                FROM training_system.routine r
+                LEFT JOIN training_system.user u ON r.trainer_id = u.id
+                LEFT JOIN training_system.person t ON u.id = t.id
+                WHERE u.id = ?
+                """;
+
+        Set<Routine> routines = new HashSet<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, user.getId());
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    if (rs.getLong("t.id") != 0) {
+                        User trainer = new User();
+                        trainer.setId(rs.getLong("t.id"));
+                        trainer.setName(rs.getString("t.first_name"));
+                        trainer.setEmail(rs.getString("t.email"));
+                        Routine routine = new Routine(
+                            rs.getLong("r.id"),
+                            rs.getString("r.name"),
+                            rs.getString("r.description"),
+                            user,
+                            trainer
+                        );
+                        routines.add(routine);
+                    } else {
+                        Routine routine = new Routine(
+                            rs.getLong("r.id"),
+                            rs.getString("r.name"),
+                            rs.getString("r.description"),
+                            user
+                        );
+                        routines.add(routine);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error listando las rutinas del usuario", e);
+        }
+
+        return routines;
     }
 }

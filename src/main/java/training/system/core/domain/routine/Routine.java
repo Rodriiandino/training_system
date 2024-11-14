@@ -27,6 +27,14 @@ public class Routine {
         this.user = user;
     }
 
+    public Routine(Long id, String name, String description, User user, User trainer) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.user = user;
+        this.trainer = trainer;
+    }
+
     public Routine(String name, String description, User user, User trainer, Set<Exercise> exercises) {
         this.name = name;
         this.description = description;

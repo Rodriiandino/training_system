@@ -69,7 +69,7 @@ public class UserController implements GenericController<User, Long>, IUser {
     }
 
     @Override
-    public boolean authenticate(String email, String password) throws ControllerException {
+    public User authenticate(String email, String password) throws ControllerException {
         try {
             return userDAO.authenticate(email, password);
         } catch (DAOException e) {
@@ -78,18 +78,18 @@ public class UserController implements GenericController<User, Long>, IUser {
     }
 
     @Override
-    public void becomeTrainer() throws ControllerException {
+    public void becomeTrainer(Long id) throws ControllerException {
         try {
-            userDAO.becomeTrainer();
+            userDAO.becomeTrainer(id);
         } catch (DAOException e) {
             throw new ControllerException("Error al convertirse en entrenador", e);
         }
     }
 
     @Override
-    public void becomeAdministrator() throws ControllerException {
+    public void becomeAdministrator(Long id) throws ControllerException {
         try {
-            userDAO.becomeAdministrator();
+            userDAO.becomeAdministrator(id);
         } catch (DAOException e) {
             throw new ControllerException("Error al convertirse en administrador", e);
         }
