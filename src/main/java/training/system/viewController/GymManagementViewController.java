@@ -2,6 +2,7 @@ package training.system.viewController;
 
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableView;
 import javafx.scene.text.Text;
 import training.system.core.domain.user.User;
 import training.system.utils.ScreenTransitionUtil;
@@ -17,6 +18,10 @@ public class GymManagementViewController implements Initializable {
     public Button progress_section;
     public Button note_section;
     public Button user_section;
+    public TableView table;
+    public Button btn_create;
+    public Button btn_edit;
+    public Button btn_out;
     private SessionManager sessionManager;
 
     @Override
@@ -47,6 +52,11 @@ public class GymManagementViewController implements Initializable {
 
         routine_section.setOnAction(e -> {
             ScreenTransitionUtil.changeScreen(this, "/training/system/view/routine-view.fxml", routine_section);
+        });
+
+        btn_out.setOnAction(e -> {
+            sessionManager.closeSession();
+            ScreenTransitionUtil.changeScreen(this, "/training/system/view/login-view.fxml", btn_out);
         });
     }
 }
