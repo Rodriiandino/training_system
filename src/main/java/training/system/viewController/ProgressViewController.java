@@ -2,23 +2,28 @@ package training.system.viewController;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import training.system.core.domain.exercise.Exercise;
 import training.system.core.domain.progress.Progress;
 import training.system.core.domain.progress.ProgressController;
 import training.system.core.domain.user.User;
 import training.system.core.exception.ControllerException;
+import training.system.utils.ConfigureColumn;
 import training.system.utils.ScreenTransitionUtil;
 import training.system.utils.SessionManager;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -50,6 +55,9 @@ public class ProgressViewController implements Initializable, IView, IViewContro
         progressController = new ProgressController();
         createColumn();
         list();
+        btn_create.setOnAction(e -> create());
+        btn_edit.setOnAction(e -> edit());
+
 
         user_section.setOnAction(e -> {
             ScreenTransitionUtil.changeScreen(this, "/training/system/view/profile-view.fxml", user_section);
@@ -96,27 +104,20 @@ public class ProgressViewController implements Initializable, IView, IViewContro
             @Override
             protected void updateItem(Exercise exercise, boolean empty) {
                 super.updateItem(exercise, empty);
-                if (empty || exercise == null) {
+                if (empty) {
                     setText(null);
+                } else if (exercise == null) {
+                    setText("-");
                 } else {
                     setText(exercise.getName());
+                    setTooltip(new Tooltip(exercise.getName()));
                 }
             }
         });
 
-        trainerColumn.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(User trainer, boolean empty) {
-                super.updateItem(trainer, empty);
-                if (empty) {
-                    setText(null);
-                } else if (trainer == null) {
-                    setText("Sin entrenador");
-                } else {
-                    setText(trainer.getName());
-                }
-            }
-        });
+        ConfigureColumn.configureTrainerColumn(trainerColumn);
+        ConfigureColumn.configureDateColumn(dateColumn);
+        List.of(repetitionsColumn, weightColumn, timeColumn).forEach(ConfigureColumn::configureIntegerColumn);
 
         table.getColumns().addAll(dateColumn, repetitionsColumn, weightColumn, timeColumn, trainerColumn, exerciseColumn);
     }
@@ -124,11 +125,49 @@ public class ProgressViewController implements Initializable, IView, IViewContro
 
     @Override
     public void edit() {
-
+        showEditModal();
     }
 
     @Override
     public void create() {
+        showCreateModal();
+    }
+
+    public void create(Integer repe, Integer weight, Integer time, Date date, Exercise exercise) {
+        Progress progress = new Progress(date, repe, weight, time, currentUser, exercise);
+
+        try {
+            progressController.create(progress);
+            list();
+        } catch (ControllerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void showCreateModal() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/progress-create-modal.fxml"));
+            Parent root = loader.load();
+
+            Scene modalScene = new Scene(root);
+
+            Stage modal = new Stage();
+            modal.initModality(Modality.APPLICATION_MODAL);
+            modal.setTitle("Crear Elemento");
+            modal.setScene(modalScene);
+            modal.setResizable(false);
+
+            ProgressCreateModal controller = loader.getController();
+            controller.setParentController(this);
+
+            modal.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void showEditModal() {
 
     }
 
@@ -145,4 +184,6 @@ public class ProgressViewController implements Initializable, IView, IViewContro
 
         table.setItems(progresses);
     }
+
+
 }

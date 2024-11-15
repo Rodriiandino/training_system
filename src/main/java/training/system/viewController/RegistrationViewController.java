@@ -9,7 +9,7 @@ import training.system.core.domain.user.User;
 import training.system.core.domain.user.UserController;
 import training.system.core.exception.ControllerException;
 import training.system.utils.ScreenTransitionUtil;
-import training.system.utils.UserValidator;
+import training.system.utils.Validators;
 import training.system.utils.Validator;
 
 import java.net.URL;
@@ -73,7 +73,7 @@ public class RegistrationViewController implements Initializable, Validator {
 
     @Override
     public void validateFields() {
-        UserValidator.userRegisterValidator(input_name, input_lastName, input_email, input_password, input_repeatPassword, text_error, btn_register);
+        Validators.userRegisterValidator(input_name, input_lastName, input_email, input_password, input_repeatPassword, text_error, btn_register);
     }
 
     @Override

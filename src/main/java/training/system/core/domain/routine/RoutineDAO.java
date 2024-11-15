@@ -6,7 +6,9 @@ import training.system.core.exception.DAOException;
 import training.system.core.generic.GenericDao;
 
 import java.sql.*;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class RoutineDAO implements GenericDao<Routine, Long>, IRoutine {
@@ -283,47 +285,60 @@ public class RoutineDAO implements GenericDao<Routine, Long>, IRoutine {
     @Override
     public Set<Routine> listUserRoutines(User user) throws DAOException {
         String sql = """
-                SELECT r.id, r.name, r.description, t.id, t.first_name, t.email
+                SELECT r.id, r.name, r.description, t.id, t.first_name, t.email, e.id, e.name, e.description
                 FROM training_system.routine r
                 LEFT JOIN training_system.user u ON r.trainer_id = u.id
                 LEFT JOIN training_system.person t ON u.id = t.id
-                WHERE u.id = ?
+                LEFT JOIN training_system.routine_exercise re ON r.id = re.routine_id
+                LEFT JOIN training_system.exercise e ON re.exercise_id = e.id
+                WHERE r.user_id = ?
                 """;
 
-        Set<Routine> routines = new HashSet<>();
+        Map<Long, Routine> routinesMap = new HashMap<>();
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, user.getId());
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    if (rs.getLong("t.id") != 0) {
-                        User trainer = new User();
-                        trainer.setId(rs.getLong("t.id"));
-                        trainer.setName(rs.getString("t.first_name"));
-                        trainer.setEmail(rs.getString("t.email"));
-                        Routine routine = new Routine(
-                            rs.getLong("r.id"),
-                            rs.getString("r.name"),
-                            rs.getString("r.description"),
-                            user,
-                            trainer
-                        );
-                        routines.add(routine);
-                    } else {
-                        Routine routine = new Routine(
-                            rs.getLong("r.id"),
-                            rs.getString("r.name"),
-                            rs.getString("r.description"),
-                            user
-                        );
-                        routines.add(routine);
+                    Routine routine = routinesMap.get(rs.getLong("r.id"));
+                    if (routine == null) {
+                        if (rs.getLong("t.id") != 0) {
+                            User trainer = new User();
+                            trainer.setId(rs.getLong("t.id"));
+                            trainer.setName(rs.getString("t.first_name"));
+                            trainer.setEmail(rs.getString("t.email"));
+                            routine = new Routine(
+                                rs.getLong("r.id"),
+                                rs.getString("r.name"),
+                                rs.getString("r.description"),
+                                user,
+                                trainer,
+                                new HashSet<>()
+                            );
+                        } else {
+                            routine = new Routine(
+                                rs.getLong("r.id"),
+                                rs.getString("r.name"),
+                                rs.getString("r.description"),
+                                user,
+                                new HashSet<>()
+                            );
+                        }
+                        routinesMap.put(routine.getId(), routine);
                     }
+
+                    Exercise exercise = new Exercise(
+                        rs.getLong("e.id"),
+                        rs.getString("e.name"),
+                        rs.getString("e.description")
+                    );
+                    routine.addExercise(exercise);
                 }
             }
         } catch (SQLException e) {
             throw new DAOException("Error listando las rutinas del usuario", e);
         }
 
-        return routines;
+        return new HashSet<>(routinesMap.values());
     }
 }

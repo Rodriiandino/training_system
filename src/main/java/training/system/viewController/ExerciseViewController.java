@@ -2,21 +2,31 @@ package training.system.viewController;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import training.system.core.domain.category.Category;
 import training.system.core.domain.exercise.Exercise;
 import training.system.core.domain.exercise.ExerciseController;
 import training.system.core.domain.user.User;
 import training.system.core.exception.ControllerException;
+import training.system.utils.ConfigureColumn;
 import training.system.utils.ScreenTransitionUtil;
 import training.system.utils.SessionManager;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ExerciseViewController implements Initializable, IView, IViewControllerManipulation {
     public Text user_name;
@@ -47,6 +57,8 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
         exerciseController = new ExerciseController();
         createColumn();
         list();
+        btn_create.setOnAction(e -> create());
+        btn_edit.setOnAction(e -> edit());
 
         user_section.setOnAction(e -> {
             ScreenTransitionUtil.changeScreen(this, "/training/system/view/profile-view.fxml", user_section);
@@ -91,64 +103,83 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
         categoriesColumn.setCellValueFactory(new PropertyValueFactory<>("categories"));
         trainerColumn.setCellValueFactory(new PropertyValueFactory<>("trainer"));
 
-        videoUrlColumn.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(String videoUrl, boolean empty) {
-                super.updateItem(videoUrl, empty);
-                setText(empty ? null : (videoUrl == null ? "Sin video" : videoUrl));
-            }
-        });
+        List.of(nameColumn, descriptionColumn, explanationColumn, videoUrlColumn).forEach(ConfigureColumn::configureTextColumn);
+        ConfigureColumn.configureTrainerColumn(trainerColumn);
+        ConfigureColumn.configureBooleanColumn(isPredefinedColumn);
 
-        categoriesColumn.setCellFactory(column -> new TableCell<>() {
+        configureCategoriesColumn(categoriesColumn);
+
+        table.getColumns().addAll(nameColumn, descriptionColumn, explanationColumn, videoUrlColumn, isPredefinedColumn, categoriesColumn, trainerColumn);
+    }
+
+
+    private void configureCategoriesColumn(TableColumn<Exercise, Set<Category>> column) {
+        column.setStyle("-fx-alignment: CENTER;");
+        column.setMinWidth(150);
+        column.setMaxWidth(250);
+
+        column.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(Set<Category> categories, boolean empty) {
                 super.updateItem(categories, empty);
                 if (empty) {
                     setText(null);
-                } else if (categories == null) {
-                    setText("Sin categorías");
+                } else if (categories == null || categories.isEmpty()) {
+                    setText("-");
                 } else {
-                    StringBuilder categoryNames = new StringBuilder();
-                    for (Category category : categories) {
-                        if (category.getName() != null) {
-                            categoryNames.append(category.getName()).append(", ");
-                        }
-                    }
-
-                    if (!categoryNames.isEmpty()) {
-                        categoryNames.setLength(categoryNames.length() - 2);
-                        setText(categoryNames.toString());
-                    } else {
-                        setText("Sin categorías");
-                    }
+                    String categoryText = categories.stream().map(Category::getName).filter(Objects::nonNull).collect(Collectors.joining(", "));
+                    setText(categoryText.length() > 80 ? categoryText.substring(0, 80) + "..." : categoryText);
+                    setTooltip(new Tooltip(categoryText));
                 }
             }
         });
-
-        trainerColumn.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(User trainer, boolean empty) {
-                super.updateItem(trainer, empty);
-                if (empty) {
-                    setText(null);
-                } else if (trainer == null) {
-                    setText("Sin entrenador");
-                } else {
-                    setText(trainer.getName());
-                }
-            }
-        });
-
-        table.getColumns().addAll(nameColumn, descriptionColumn, explanationColumn, videoUrlColumn, isPredefinedColumn, categoriesColumn, trainerColumn);
     }
 
     @Override
     public void edit() {
-
+        showEditModal();
     }
 
     @Override
     public void create() {
+        showCreateModal();
+    }
+
+    public void create(String name, String description, String explanation, String videoUrl, Set<Category> categories) {
+        Exercise exercise = new Exercise(name, description, explanation, videoUrl, false, categories, currentUser);
+
+        try {
+            exerciseController.create(exercise);
+            list();
+        } catch (ControllerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void showCreateModal() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/exercise-create-modal.fxml"));
+            Parent root = loader.load();
+
+            Scene modalScene = new Scene(root);
+
+            Stage modal = new Stage();
+            modal.initModality(Modality.APPLICATION_MODAL);
+            modal.setTitle("Crear Elemento");
+            modal.setScene(modalScene);
+            modal.setResizable(false);
+
+            ExerciseCreateModal controller = loader.getController();
+            controller.setParentController(this);
+
+            modal.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void showEditModal() {
 
     }
 

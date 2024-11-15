@@ -7,7 +7,7 @@ import training.system.core.domain.user.UserController;
 import training.system.core.exception.ControllerException;
 import training.system.utils.ScreenTransitionUtil;
 import training.system.utils.SessionManager;
-import training.system.utils.UserValidator;
+import training.system.utils.Validators;
 import training.system.utils.Validator;
 
 import java.net.URL;
@@ -77,7 +77,7 @@ public class LoginViewController implements Initializable, Validator {
 
     @Override
     public void validateFields() {
-        UserValidator.userLoginValidator(input_email, input_password, text_error, btn_in);
+        Validators.userLoginValidator(input_email, input_password, text_error, btn_in);
     }
 
     @Override

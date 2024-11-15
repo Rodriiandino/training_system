@@ -338,6 +338,13 @@ FROM training_system.progress p
          LEFT JOIN training_system.person per ON u.id = per.id
          LEFT JOIN training_system.exercise e ON p.exercise_id = e.id;
 
+SELECT r.id, r.name, r.description, t.id, t.first_name, t.email, e.id, e.name, e.description
+FROM training_system.routine r
+         LEFT JOIN training_system.user u ON r.trainer_id = u.id
+         LEFT JOIN training_system.person t ON u.id = t.id
+         LEFT JOIN training_system.routine_exercise re ON r.id = re.routine_id
+         LEFT JOIN training_system.exercise e ON re.exercise_id = e.id
+WHERE r.user_id = ?;
 
 SELECT
     e.id AS exercise_id,

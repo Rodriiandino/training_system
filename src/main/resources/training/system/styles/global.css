@@ -6,7 +6,6 @@
     -fx-background-color: #1F1E1C;
 }
 
-
 .input {
     -fx-background-color: transparent;
     -fx-border-color: #1F1E1C;
@@ -48,14 +47,11 @@ Button {
 
 Button:hover {
     -fx-background-color: #2a2a27;
-    -fx-font-size: 19px;
 }
-
 
 .button-secondary:pressed {
     -fx-background-color: #e0e0e0;
 }
-
 
 .text {
     -fx-text-fill: #1F1E1C;

@@ -5,4 +5,6 @@ public interface IViewControllerManipulation {
     void edit();
     void create();
     void list();
+    void showCreateModal();
+    void showEditModal();
 }

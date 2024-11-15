@@ -2,22 +2,29 @@ package training.system.viewController;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import training.system.core.domain.exercise.Exercise;
+import training.system.core.domain.progress.Progress;
 import training.system.core.domain.routine.Routine;
 import training.system.core.domain.routine.RoutineController;
 import training.system.core.domain.user.User;
 import training.system.core.exception.ControllerException;
+import training.system.utils.ConfigureColumn;
 import training.system.utils.ScreenTransitionUtil;
 import training.system.utils.SessionManager;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -49,6 +56,8 @@ public class RoutineViewController implements Initializable, IView, IViewControl
         routineController = new RoutineController();
         createColumn();
         list();
+        btn_create.setOnAction(e -> create());
+        btn_edit.setOnAction(e -> edit());
 
         user_section.setOnAction(e -> {
             ScreenTransitionUtil.changeScreen(this, "/training/system/view/profile-view.fxml", user_section);
@@ -87,6 +96,13 @@ public class RoutineViewController implements Initializable, IView, IViewControl
         trainerColumn.setCellValueFactory(new PropertyValueFactory<>("trainer"));
         exercisesColumn.setCellValueFactory(new PropertyValueFactory<>("exercises"));
 
+
+        List.of(nameColumn, descriptionColumn).forEach(ConfigureColumn::configureTextColumn);
+        ConfigureColumn.configureTrainerColumn(trainerColumn);
+
+        exercisesColumn.setStyle("-fx-alignment: CENTER;");
+        exercisesColumn.setMinWidth(150);
+        exercisesColumn.setMaxWidth(250);
         exercisesColumn.setCellFactory(column -> new TableCell<>() {
             @Override
             protected void updateItem(Set<Exercise> exercises, boolean empty) {
@@ -98,23 +114,16 @@ public class RoutineViewController implements Initializable, IView, IViewControl
                 } else {
                     StringBuilder exercisesString = new StringBuilder();
                     for (Exercise exercise : exercises) {
-                        exercisesString.append(exercise.getName()).append(", ");
+                        if (exercise != null) {
+                            exercisesString.append(exercise.getName()).append(", ");
+                        }
                     }
-                    setText(exercisesString.toString());
-                }
-            }
-        });
+                    exercisesString.setLength(exercisesString.length() - 2);
 
-        trainerColumn.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(User trainer, boolean empty) {
-                super.updateItem(trainer, empty);
-                if (empty) {
-                    setText(null);
-                } else if (trainer == null) {
-                    setText("Sin entrenador");
-                } else {
-                    setText(trainer.getName());
+                    setText(exercisesString.length() > 80 ? exercisesString.substring(0, 80) + "..." : exercisesString.toString());
+
+                    setTooltip(new Tooltip(exercisesString.toString()));
+
                 }
             }
         });
@@ -125,11 +134,49 @@ public class RoutineViewController implements Initializable, IView, IViewControl
 
     @Override
     public void edit() {
-
+        showEditModal();
     }
 
     @Override
     public void create() {
+        showCreateModal();
+    }
+
+    public void create(String name, String description, Set<Exercise> exercises) {
+        Routine routine = new Routine(name, description, currentUser, exercises);
+
+        try {
+            routineController.create(routine);
+            list();
+        } catch (ControllerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void showCreateModal() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/routine-create-modal.fxml"));
+            Parent root = loader.load();
+
+            Scene modalScene = new Scene(root);
+
+            Stage modal = new Stage();
+            modal.initModality(Modality.APPLICATION_MODAL);
+            modal.setTitle("Crear Elemento");
+            modal.setScene(modalScene);
+            modal.setResizable(false);
+
+            RoutineCreateModal controller = loader.getController();
+            controller.setParentController(this);
+
+            modal.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void showEditModal() {
 
     }
 
