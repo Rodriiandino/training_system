@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ExerciseCreateModal implements Initializable, IViewModal, Validator {
     public TextField input_name;
@@ -29,13 +28,13 @@ public class ExerciseCreateModal implements Initializable, IViewModal, Validator
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        categoryController = new CategoryController();
         setupListeners();
     }
 
     private void setupListeners() {
         validateFields();
         addValidators();
-        categoryController = new CategoryController();
         btn_register.setOnAction(e -> create());
         Set<Category> categories = null;
 

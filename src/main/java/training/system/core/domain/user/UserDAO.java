@@ -1,5 +1,6 @@
 package training.system.core.domain.user;
 
+import training.system.core.domain.gym.Gym;
 import training.system.core.exception.DAOException;
 import training.system.core.generic.GenericDao;
 
@@ -68,7 +69,7 @@ public class UserDAO implements GenericDao<User, Long>, IUser {
 
     @Override
     public User update(User entity) throws DAOException {
-        String sql = "UPDATE training_system.person SET first_name = ?, last_name = ?, email = ?, password = ? WHERE id = ?";
+        String sql = "UPDATE training_system.person SET first_name = ?, last_name = ?, email = ? WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             connection.setAutoCommit(false);
@@ -76,8 +77,7 @@ public class UserDAO implements GenericDao<User, Long>, IUser {
             stmt.setString(1, entity.getName());
             stmt.setString(2, entity.getLastName());
             stmt.setString(3, entity.getEmail());
-            stmt.setString(4, entity.getPassword());
-            stmt.setLong(5, entity.getId());
+            stmt.setLong(4, entity.getId());
             stmt.executeUpdate();
 
             connection.commit();
@@ -111,22 +111,94 @@ public class UserDAO implements GenericDao<User, Long>, IUser {
 
     @Override
     public User search(Long aLong) throws DAOException {
-        String sql = "SELECT * FROM training_system.person WHERE id = ?";
-        User user = null;
+        String sql = """
+            SELECT 
+                p.id, p.first_name, p.last_name, p.email,
+                r.id as role_id, r.role_name,
+                g_ad.id as admin_gym_id, g_ad.name as admin_gym_name, g_ad.address as admin_gym_address,
+                g_tr.id as train_gym_id, g_tr.name as train_gym_name, g_tr.address as train_gym_address,
+                gw.id as worker_gym_id, gw.name as worker_gym_name, gw.address as worker_gym_address
+            FROM training_system.person p
+            LEFT JOIN training_system.user_roles ur ON p.id = ur.user_id
+            LEFT JOIN training_system.role r ON ur.role_id = r.id
+            LEFT JOIN training_system.user u ON p.id = u.id
+            LEFT JOIN training_system.gym g_ad ON u.gym_admin_id = g_ad.id
+            LEFT JOIN training_system.gym g_tr ON u.gym_train_id = g_tr.id
+            LEFT JOIN training_system.gym_worker_user gwu ON u.id = gwu.user_id
+            LEFT JOIN training_system.gym gw ON gwu.gym_id = gw.id
+            WHERE p.id = ?""";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, aLong);
 
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    user = new User(rs.getLong("id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"));
+                User user = null;
+                Set<Role> roles = new HashSet<>();
+                Set<Gym> workerGyms = new HashSet<>();
+                Gym adminGym = null;
+                Gym trainingGym = null;
+
+                while (rs.next()) {
+                    if (user == null) {
+                        user = new User(
+                                rs.getLong("id"),
+                                rs.getString("first_name"),
+                                rs.getString("last_name"),
+                                rs.getString("email")
+                        );
+                    }
+
+                    long roleId = rs.getLong("role_id");
+                    if (roleId != 0) {
+                        roles.add(new Role(roleId, RoleEnum.valueOf(rs.getString("role_name"))));
+                    }
+
+                    if (adminGym == null) {
+                        long adminGymId = rs.getLong("admin_gym_id");
+                        if (adminGymId != 0) {
+                            adminGym = new Gym(
+                                    adminGymId,
+                                    rs.getString("admin_gym_name"),
+                                    rs.getString("admin_gym_address")
+                            );
+                            user.setGymManager(adminGym);
+                        }
+                    }
+
+                    if (trainingGym == null) {
+                        long trainGymId = rs.getLong("train_gym_id");
+                        if (trainGymId != 0) {
+                            trainingGym = new Gym(
+                                    trainGymId,
+                                    rs.getString("train_gym_name"),
+                                    rs.getString("train_gym_address")
+                            );
+                            user.setGymTraining(trainingGym);
+                        }
+                    }
+
+                    long workerGymId = rs.getLong("worker_gym_id");
+                    if (workerGymId != 0) {
+                        Gym workerGym = new Gym(
+                                workerGymId,
+                                rs.getString("worker_gym_name"),
+                                rs.getString("worker_gym_address")
+                        );
+                        workerGyms.add(workerGym);
+                    }
+                }
+
+                if (user != null) {
+                    roles.forEach(user::addRole);
+                    workerGyms.forEach(user::addGymTrainer);
+                    return user;
                 }
             }
         } catch (SQLException e) {
             throw new DAOException("error al buscar el usuario", e);
         }
 
-        return user;
+        return null;
     }
 
     @Override
@@ -154,42 +226,95 @@ public class UserDAO implements GenericDao<User, Long>, IUser {
 
     @Override
     public User authenticate(String email, String password) throws DAOException {
-        String OBTAIN_USER = "SELECT * FROM training_system.person WHERE email = ? AND password = ?";
-        String OBTAIN_ROLES = "SELECT r.id, r.role_name FROM training_system.role r JOIN training_system.user_roles ur ON r.id = ur.role_id WHERE ur.user_id = ?";
-        User user = null;
+        String sql = """
+            SELECT 
+                p.id, p.first_name, p.last_name, p.email,
+                r.id as role_id, r.role_name,
+                g_ad.id as admin_gym_id, g_ad.name as admin_gym_name, g_ad.address as admin_gym_address,
+                g_tr.id as train_gym_id, g_tr.name as train_gym_name, g_tr.address as train_gym_address,
+                gw.id as worker_gym_id, gw.name as worker_gym_name, gw.address as worker_gym_address
+            FROM training_system.person p
+            LEFT JOIN training_system.user_roles ur ON p.id = ur.user_id
+            LEFT JOIN training_system.role r ON ur.role_id = r.id
+            LEFT JOIN training_system.user u ON p.id = u.id
+            LEFT JOIN training_system.gym g_ad ON u.gym_admin_id = g_ad.id
+            LEFT JOIN training_system.gym g_tr ON u.gym_train_id = g_tr.id
+            LEFT JOIN training_system.gym_worker_user gwu ON u.id = gwu.user_id
+            LEFT JOIN training_system.gym gw ON gwu.gym_id = gw.id
+            WHERE p.email = ? AND p.password = ?""";
 
-        try {
-            connection.setAutoCommit(false);
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            stmt.setString(2, password);
 
-            try (PreparedStatement stmt = connection.prepareStatement(OBTAIN_USER)) {
-                stmt.setString(1, email);
-                stmt.setString(2, password);
+            try (ResultSet rs = stmt.executeQuery()) {
+                User user = null;
+                Set<Role> roles = new HashSet<>();
+                Set<Gym> workerGyms = new HashSet<>();
+                Gym adminGym = null;
+                Gym trainingGym = null;
 
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        user = new User(rs.getLong("id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"));
+                while (rs.next()) {
+                    if (user == null) {
+                        user = new User(
+                                rs.getLong("id"),
+                                rs.getString("first_name"),
+                                rs.getString("last_name"),
+                                rs.getString("email")
+                        );
                     }
-                }
-            }
 
-            if (user != null) {
-                try (PreparedStatement stmt = connection.prepareStatement(OBTAIN_ROLES)) {
-                    stmt.setLong(1, user.getId());
+                    long roleId = rs.getLong("role_id");
+                    if (roleId != 0) {
+                        roles.add(new Role(roleId, RoleEnum.valueOf(rs.getString("role_name"))));
+                    }
 
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        while (rs.next()) {
-                            user.addRole(new Role(rs.getLong("id"), RoleEnum.valueOf(rs.getString("role_name"))));
+                    if (adminGym == null) {
+                        long adminGymId = rs.getLong("admin_gym_id");
+                        if (adminGymId != 0) {
+                            adminGym = new Gym(
+                                    adminGymId,
+                                    rs.getString("admin_gym_name"),
+                                    rs.getString("admin_gym_address")
+                            );
+                            user.setGymManager(adminGym);
                         }
                     }
+
+                    if (trainingGym == null) {
+                        long trainGymId = rs.getLong("train_gym_id");
+                        if (trainGymId != 0) {
+                            trainingGym = new Gym(
+                                    trainGymId,
+                                    rs.getString("train_gym_name"),
+                                    rs.getString("train_gym_address")
+                            );
+                            user.setGymTraining(trainingGym);
+                        }
+                    }
+
+                    long workerGymId = rs.getLong("worker_gym_id");
+                    if (workerGymId != 0) {
+                        Gym workerGym = new Gym(
+                                workerGymId,
+                                rs.getString("worker_gym_name"),
+                                rs.getString("worker_gym_address")
+                        );
+                        workerGyms.add(workerGym);
+                    }
+                }
+
+                if (user != null) {
+                    roles.forEach(user::addRole);
+                    workerGyms.forEach(user::addGymTrainer);
+                    return user;
                 }
             }
-
-            connection.commit();
         } catch (SQLException e) {
-            throw new DAOException("error al autenticar el usuario", e);
+            throw new DAOException("Error al autenticar el usuario", e);
         }
 
-        return user;
+        return null;
     }
 
     @Override

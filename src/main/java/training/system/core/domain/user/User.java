@@ -41,8 +41,8 @@ public class User extends Person {
         this.roles.add(new Role(RoleEnum.ROLE_USER));
     }
 
-    public User(Long id, String name, String lastName, String email, String password, Set<Role> roles) {
-        super(id, name, lastName, email, password);
+    public User(Long id, String name, String lastName, String email, Set<Role> roles) {
+        super(id, name, lastName, email);
         this.roles = roles;
     }
 
@@ -102,15 +102,11 @@ public class User extends Person {
         if (isTrainer()) {
             return gymTrainer;
         }
-        throw new IllegalStateException("El usuario no es entrenador.");
+        return null;
     }
 
     public void addGymTrainer(Gym gymTrainer) {
-        if (isTrainer()) {
-            this.gymTrainer.add(gymTrainer);
-        } else {
-            throw new IllegalStateException("El usuario no es entrenador.");
-        }
+        this.gymTrainer.add(gymTrainer);
     }
 
     public void removeGymTrainer(Gym gymTrainer) {
@@ -125,15 +121,11 @@ public class User extends Person {
         if (isAdministrator()) {
             return gymManager;
         }
-        throw new IllegalStateException("El usuario no es administrador.");
+        return null;
     }
 
     public void setGymManager(Gym gymManager) {
-        if (isAdministrator()) {
             this.gymManager = gymManager;
-        } else {
-            throw new IllegalStateException("El usuario no es administrador.");
-        }
     }
 
     public Set<User> getClients() {

@@ -416,6 +416,23 @@ FROM training_system.user u
          LEFT JOIN training_system.person p ON u.id = p.id
 WHERE u.gym_admin_id = ?;
 
+SELECT
+    p.id, p.first_name, p.last_name, p.email,
+    r.id as role_id, r.role_name,
+    g_ad.id as admin_gym_id, g_ad.name as admin_gym_name, g_ad.address as admin_gym_address,
+    g_tr.id as train_gym_id, g_tr.name as train_gym_name, g_tr.address as train_gym_address,
+    gw.id as worker_gym_id, gw.name as worker_gym_name, gw.address as worker_gym_address
+FROM training_system.person p
+         LEFT JOIN training_system.user_roles ur ON p.id = ur.user_id
+         LEFT JOIN training_system.role r ON ur.role_id = r.id
+         LEFT JOIN training_system.user u ON p.id = u.id
+         LEFT JOIN training_system.gym g_ad ON u.gym_admin_id = g_ad.id
+         LEFT JOIN training_system.gym g_tr ON u.gym_train_id = g_tr.id
+         LEFT JOIN training_system.gym_worker_user gwu ON u.id = gwu.user_id
+         LEFT JOIN training_system.gym gw ON gwu.gym_id = gw.id
+WHERE p.id = ?;
+
+
 -- Eliminar datos de prueba
 -- Eliminar notas
 DELETE FROM Note WHERE user_id = 1;

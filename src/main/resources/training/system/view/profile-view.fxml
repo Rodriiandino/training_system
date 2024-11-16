@@ -2,7 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -88,19 +90,103 @@
                               </AnchorPane>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                                  <children>
-                                    <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <TableView fx:id="table" editable="true" prefHeight="370.0" prefWidth="1000.0" styleClass="background-primary" />
-                                          <HBox alignment="BOTTOM_LEFT" prefHeight="40.0" prefWidth="1000.0" spacing="20.0">
+                                          <HBox alignment="CENTER" spacing="10.0">
                                              <children>
-                                                <Button fx:id="btn_create" mnemonicParsing="false" text="Crear" />
-                                                <Button fx:id="btn_edit" mnemonicParsing="false" text="Editar" />
+                                                <Label prefHeight="35.0" prefWidth="77.0" styleClass="text" text="Nombre:">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="input_name" editable="false" prefHeight="31.0" prefWidth="200.0" styleClass="input">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </TextField>
+                                                <Button fx:id="btn_edit_name" mnemonicParsing="false" styleClass="button-third" text="Editar" visible="false" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" spacing="10.0">
+                                             <children>
+                                                <Label prefHeight="19.0" prefWidth="77.0" styleClass="text" text="Apellido:">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="input_lastname" editable="false" prefHeight="31.0" prefWidth="200.0" styleClass="input">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </TextField>
+                                                <Button fx:id="btn_edit_lastname" mnemonicParsing="false" styleClass="button-third" text="Editar" visible="false" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" spacing="10.0">
+                                             <children>
+                                                <Label prefHeight="19.0" prefWidth="77.0" styleClass="text" text="Email:">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="input_email" editable="false" prefHeight="31.0" prefWidth="200.0" styleClass="input">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </TextField>
+                                                <Button fx:id="btn_edit_email" mnemonicParsing="false" styleClass="button-third" text="Editar" visible="false" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" spacing="10.0">
+                                             <children>
+                                                <Label fx:id="label_rol" styleClass="text" text="Rol: " />
+                                             </children>
+                                          </HBox>
+                                          <HBox fx:id="container_info_gym" alignment="CENTER" spacing="10.0">
+                                             <children>
+                                                <HBox fx:id="container_gym_train" alignment="CENTER" spacing="10.0">
+                                                   <children>
+                                                      <Label styleClass="text" text="Entreno en:" />
+                                                      <Label fx:id="text_gym_train" styleClass="text" text="entreno" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox fx:id="container_gym_admin" alignment="CENTER" spacing="10.0">
+                                                   <children>
+                                                      <Label styleClass="text" text="Administro el Gimnasio: " />
+                                                      <Label fx:id="text_gym_admin" styleClass="text" text="admin" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox fx:id="container_gym_work" alignment="CENTER" spacing="10.0">
+                                                   <children>
+                                                      <Label styleClass="text" text="Gimnasios en donde trabajo:" />
+                                                      <ListView fx:id="list_gym_work" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" prefHeight="40.0" prefWidth="1000.0" spacing="20.0">
+                                             <children>
+                                                <Button fx:id="btn_trainer" mnemonicParsing="false" prefHeight="35.0" prefWidth="279.0" text="Convertirse en Entrenador" />
+                                                <Button fx:id="btn_manager" mnemonicParsing="false" text="Convertirse en Administrador" />
+                                                <Button fx:id="btn_active_edit" mnemonicParsing="false" text="Editar Perfil" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER" prefHeight="40.0" prefWidth="1000.0" spacing="20.0">
+                                             <children>
+                                                <Button fx:id="btn_create_gym" mnemonicParsing="false" text="Crear Gimnasio" visible="false" />
+                                                <Button fx:id="btn_in_gym" mnemonicParsing="false" text="Entrar Gimnasio" visible="false" />
                                              </children>
                                              <padding>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                              </padding>
                                           </HBox>
                                        </children>
+                                       <padding>
+                                          <Insets bottom="10.0" top="10.0" />
+                                       </padding>
                                     </VBox>
                                  </children>
                               </AnchorPane>

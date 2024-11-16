@@ -44,6 +44,32 @@ public class Validators {
         btn_register.setDisable(!allFieldsValid);
     }
 
+    public static void editUserValidator(TextField input_name, TextField input_lastName, TextField input_email, Button btn_edit_name, Button btn_edit_lastname, Button btn_edit_email) {
+        if (input_name.getText().isEmpty() || input_name.getText().length() < 3 || input_name.getText().length() > 20) {
+            input_name.setStyle("-fx-border-color: red");
+            btn_edit_name.setDisable(true);
+        } else {
+            input_name.setStyle("-fx-border-color: #000000");
+            btn_edit_name.setDisable(false);
+        }
+
+        if (input_lastName.getText().isEmpty() || input_lastName.getText().length() < 3 || input_lastName.getText().length() > 20) {
+            input_lastName.setStyle("-fx-border-color: red");
+            btn_edit_lastname.setDisable(true);
+        } else {
+            input_lastName.setStyle("-fx-border-color: #000000");
+            btn_edit_lastname.setDisable(false);
+        }
+
+        if (input_email.getText().isEmpty() || !input_email.getText().contains("@") || !input_email.getText().contains(".com") || input_email.getText().length() < 10) {
+            input_email.setStyle("-fx-border-color: red");
+            btn_edit_email.setDisable(true);
+        } else {
+            input_email.setStyle("-fx-border-color: #000000");
+            btn_edit_email.setDisable(false);
+        }
+    }
+
     public static void createExerciseValidator(TextField input_name, TextField input_description, TextField input_explanation, Label text_error, Button btn_register) {
         boolean isNameValid = !input_name.getText().isEmpty() && input_name.getText().length() > 5 && input_name.getText().length() < 255;
         boolean isDescriptionValid = !input_description.getText().isEmpty() && input_description.getText().length() > 10 && input_description.getText().length() < 255;
@@ -102,5 +128,14 @@ public class Validators {
         boolean allFieldsValid = isNameValid && isExerciseSelected;
 
         btn_register.setDisable(!allFieldsValid);
+    }
+
+    public static void createGymValidator(TextField input_name, Label text_error, Button btn_register) {
+        boolean isNameValid = !input_name.getText().isEmpty() && input_name.getText().length() > 5 && input_name.getText().length() < 255;
+
+        if (!isNameValid) text_error.setText("Nombre invalido (min 5 caracteres, max 255 y no puede estar vacio");
+        else text_error.setText("");
+
+        btn_register.setDisable(!isNameValid);
     }
 }
