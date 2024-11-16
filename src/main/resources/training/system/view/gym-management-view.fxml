@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -95,28 +94,43 @@
                                        <children>
                                           <HBox alignment="CENTER" prefHeight="190.0" prefWidth="980.0" spacing="10.0">
                                              <children>
-                                                <VBox alignment="CENTER" prefWidth="300.0" spacing="10.0">
+                                                <VBox alignment="CENTER" prefWidth="300.0" spacing="5.0">
                                                    <children>
                                                       <Label text="Entenadores del gimnasio" />
                                                       <ListView fx:id="list_trainer" prefHeight="200.0" prefWidth="200.0" />
                                                       <TextField fx:id="input_new_trainer" promptText="Email del Entrenador" styleClass="input" />
                                                       <Button fx:id="btn_new_trainer" disable="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="180.0" text="Añdir Entrenador" />
+                                                      <Label fx:id="text_error_trainer" text="Error" textFill="RED" visible="false">
+                                                         <font>
+                                                            <Font size="8.0" />
+                                                         </font>
+                                                      </Label>
                                                    </children>
                                                 </VBox>
-                                                <VBox alignment="CENTER" prefWidth="300.0" spacing="10.0">
+                                                <VBox alignment="CENTER" prefWidth="300.0" spacing="5.0">
                                                    <children>
                                                       <Label text="Clientes del gimnasio" />
                                                       <ListView fx:id="list_client" prefHeight="200.0" prefWidth="200.0" />
                                                       <TextField fx:id="input_new_client" promptText="Email del Cliente" styleClass="input" />
                                                       <Button fx:id="btn_new_client" disable="true" mnemonicParsing="false" text="Añdir Cliente" />
+                                                      <Label fx:id="text_error_client" text="Error" textFill="RED" visible="false">
+                                                         <font>
+                                                            <Font size="8.0" />
+                                                         </font>
+                                                      </Label>
                                                    </children>
                                                 </VBox>
-                                                <VBox alignment="CENTER" prefWidth="300.0" spacing="10.0">
+                                                <VBox alignment="CENTER" prefWidth="300.0" spacing="5.0">
                                                    <children>
                                                       <Label text="Administradores del gimnasio" />
                                                       <ListView fx:id="list_admin" prefHeight="200.0" prefWidth="200.0" />
                                                       <TextField fx:id="input_new_admin" promptText="Email del Administrador" styleClass="input" />
                                                       <Button fx:id="btn_new_admin" disable="true" mnemonicParsing="false" text="Añadir Administrador" />
+                                                      <Label fx:id="text_error_admin" text="Error" textFill="RED" visible="false">
+                                                         <font>
+                                                            <Font size="8.0" />
+                                                         </font>
+                                                      </Label>
                                                    </children>
                                                 </VBox>
                                              </children>
@@ -124,7 +138,6 @@
                                           <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
                                              <children>
                                                 <Label text="Entrenadores Vinculados con Clientes" />
-                                                <TableView fx:id="table_trainer_client" prefHeight="200.0" prefWidth="200.0" styleClass="background-primary" />
                                                 <HBox alignment="CENTER" spacing="10.0">
                                                    <children>
                                                       <TextField fx:id="input_trainer_attach" prefHeight="25.0" prefWidth="200.0" promptText="Email del entrenador a vincular" styleClass="input" />
@@ -132,6 +145,11 @@
                                                       <TextField fx:id="input_client_attach" prefHeight="25.0" prefWidth="200.0" promptText="Email del cliente a vincular" styleClass="input" />
                                                    </children>
                                                 </HBox>
+                                                <Label fx:id="text_error_attach" text="Error" textFill="RED" visible="false">
+                                                   <font>
+                                                      <Font size="8.0" />
+                                                   </font>
+                                                </Label>
                                              </children>
                                           </VBox>
                                        </children>

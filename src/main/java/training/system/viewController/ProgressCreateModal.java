@@ -28,10 +28,10 @@ public class ProgressCreateModal implements Initializable, IViewModal, Validator
     public Button btn_register;
     public Label text_error;
     public ListView<Exercise> list_view;
-    ProgressViewController progressViewController;
+    public ProgressViewController progressViewController;
     private SessionManager sessionManager;
     private ExerciseController exerciseController;
-    User currentUser;
+    private User currentUser;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -92,7 +92,7 @@ public class ProgressCreateModal implements Initializable, IViewModal, Validator
 
     @Override
     public void validateFields() {
-        Validators.createProgressValidator(list_view, input_date, text_error, btn_register);
+        Validators.progressValidator(list_view, input_date, text_error, btn_register);
     }
 
     @Override

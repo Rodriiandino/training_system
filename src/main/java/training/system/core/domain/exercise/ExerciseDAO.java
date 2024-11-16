@@ -69,7 +69,7 @@ public class ExerciseDAO implements GenericDao<Exercise, Long>, IExercise {
 
     @Override
     public Exercise update(Exercise entity) throws DAOException {
-        String sql = """
+        String UPDATE_EXERCISE = """
                 UPDATE training_system.exercise
                 SET name = ?,
                     description = ?,
@@ -78,16 +78,42 @@ public class ExerciseDAO implements GenericDao<Exercise, Long>, IExercise {
                 WHERE id = ?
                 """;
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        String DELETE_EXERCISE_CATEGORIES = """
+                DELETE FROM training_system.exercise_category
+                WHERE exercise_id = ?
+                """;
+
+        String INSERT_EXERCISE_CATEGORY = """
+                INSERT INTO training_system.exercise_category (exercise_id, category_id)
+                VALUES (?, ?)
+                """;
+
+        try {
             connection.setAutoCommit(false);
 
-            stmt.setString(1, entity.getName());
-            stmt.setString(2, entity.getDescription());
-            stmt.setString(3, entity.getExplanation());
-            stmt.setString(4, entity.getVideoUrl());
-            stmt.setLong(5, entity.getId());
+            try (PreparedStatement stmt = connection.prepareStatement(UPDATE_EXERCISE)) {
+                stmt.setString(1, entity.getName());
+                stmt.setString(2, entity.getDescription());
+                stmt.setString(3, entity.getExplanation());
+                stmt.setString(4, entity.getVideoUrl());
+                stmt.setLong(5, entity.getId());
+                stmt.executeUpdate();
+            }
 
-            stmt.executeUpdate();
+            try (PreparedStatement stmt = connection.prepareStatement(DELETE_EXERCISE_CATEGORIES)) {
+                stmt.setLong(1, entity.getId());
+                stmt.executeUpdate();
+            }
+
+            if (entity.getCategories() != null && !entity.getCategories().isEmpty()) {
+                try (PreparedStatement stmt = connection.prepareStatement(INSERT_EXERCISE_CATEGORY)) {
+                    for (Category category : entity.getCategories()) {
+                        stmt.setLong(1, entity.getId());
+                        stmt.setLong(2, category.getId());
+                        stmt.executeUpdate();
+                    }
+                }
+            }
 
             connection.commit();
             return entity;
@@ -98,6 +124,12 @@ public class ExerciseDAO implements GenericDao<Exercise, Long>, IExercise {
                 throw new DAOException("error durante el rollback", rollbackEx);
             }
             throw new DAOException("error actualizando el ejercicio", e);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new DAOException("error restaurando el autocommit", e);
+            }
         }
     }
 

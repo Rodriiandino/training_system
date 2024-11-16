@@ -69,19 +69,47 @@ public class RoutineDAO implements GenericDao<Routine, Long>, IRoutine {
 
     @Override
     public Routine update(Routine entity) throws DAOException {
-        String sql = """
-                UPDATE training_system.routine
-                SET name = ?, description = ?
-                WHERE id = ?
-                """;
+        String UPDATE_ROUTINE = """
+            UPDATE training_system.routine
+            SET name = ?, 
+                description = ?
+            WHERE id = ?
+            """;
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        String DELETE_ROUTINE_EXERCISES = """
+            DELETE FROM training_system.routine_exercise
+            WHERE routine_id = ?
+            """;
+
+        String INSERT_ROUTINE_EXERCISE = """
+            INSERT INTO training_system.routine_exercise (routine_id, exercise_id)
+            VALUES (?, ?)
+            """;
+
+        try {
             connection.setAutoCommit(false);
 
-            stmt.setString(1, entity.getName());
-            stmt.setString(2, entity.getDescription());
-            stmt.setLong(3, entity.getId());
-            stmt.executeUpdate();
+            try (PreparedStatement stmt = connection.prepareStatement(UPDATE_ROUTINE)) {
+                stmt.setString(1, entity.getName());
+                stmt.setString(2, entity.getDescription());
+                stmt.setLong(3, entity.getId());
+                stmt.executeUpdate();
+            }
+
+            try (PreparedStatement stmt = connection.prepareStatement(DELETE_ROUTINE_EXERCISES)) {
+                stmt.setLong(1, entity.getId());
+                stmt.executeUpdate();
+            }
+
+            if (entity.getExercises() != null && !entity.getExercises().isEmpty()) {
+                try (PreparedStatement stmt = connection.prepareStatement(INSERT_ROUTINE_EXERCISE)) {
+                    for (Exercise exercise : entity.getExercises()) {
+                        stmt.setLong(1, entity.getId());
+                        stmt.setLong(2, exercise.getId());
+                        stmt.executeUpdate();
+                    }
+                }
+            }
 
             connection.commit();
             return entity;
@@ -92,6 +120,12 @@ public class RoutineDAO implements GenericDao<Routine, Long>, IRoutine {
                 throw new DAOException("Error durante el rollback de la rutina", rollbackEx);
             }
             throw new DAOException("Error actualizando la rutina", e);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new DAOException("Error restaurando el autocommit", e);
+            }
         }
     }
 

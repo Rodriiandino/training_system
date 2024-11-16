@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import training.system.core.domain.category.Category;
 import training.system.core.domain.exercise.Exercise;
 import training.system.core.domain.exercise.ExerciseController;
+import training.system.core.domain.note.Note;
 import training.system.core.domain.user.User;
 import training.system.core.exception.ControllerException;
 import training.system.utils.ConfigureColumn;
@@ -48,6 +49,7 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
         sessionManager = SessionManager.getInstance();
         currentUser = sessionManager.getCurrentUser();
         user_name.setText(currentUser.getName());
+        btn_edit.setDisable(true);
 
         setupListeners();
     }
@@ -57,6 +59,10 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
         exerciseController = new ExerciseController();
         createColumn();
         list();
+        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            btn_edit.setDisable(newSelection == null);
+        });
+
         btn_create.setOnAction(e -> create());
         btn_edit.setOnAction(e -> edit());
 
@@ -87,6 +93,7 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
 
     @Override
     public void createColumn() {
+        TableColumn<Exercise, Integer> idColumn = new TableColumn<>("ID");
         TableColumn<Exercise, String> nameColumn = new TableColumn<>("Nombre");
         TableColumn<Exercise, String> descriptionColumn = new TableColumn<>("Descripción");
         TableColumn<Exercise, String> explanationColumn = new TableColumn<>("Explicación");
@@ -95,6 +102,7 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
         TableColumn<Exercise, Set<Category>> categoriesColumn = new TableColumn<>("Categorías");
         TableColumn<Exercise, User> trainerColumn = new TableColumn<>("Entrenador");
 
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         explanationColumn.setCellValueFactory(new PropertyValueFactory<>("explanation"));
@@ -109,7 +117,7 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
 
         configureCategoriesColumn(categoriesColumn);
 
-        table.getColumns().addAll(nameColumn, descriptionColumn, explanationColumn, videoUrlColumn, isPredefinedColumn, categoriesColumn, trainerColumn);
+        table.getColumns().addAll(idColumn, nameColumn, descriptionColumn, explanationColumn, videoUrlColumn, isPredefinedColumn, categoriesColumn, trainerColumn);
     }
 
 
@@ -156,6 +164,15 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
         }
     }
 
+    public void edit(Exercise exercise) {
+        try {
+            exerciseController.update(exercise);
+            list();
+        } catch (ControllerException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void showCreateModal() {
         try {
@@ -180,7 +197,26 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
     }
     @Override
     public void showEditModal() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/exercise-edit-modal.fxml"));
+            Parent root = loader.load();
 
+            Scene modalScene = new Scene(root);
+
+            Stage modal = new Stage();
+            modal.initModality(Modality.APPLICATION_MODAL);
+            modal.setTitle("Editar Elemento");
+            modal.setScene(modalScene);
+            modal.setResizable(false);
+
+            ExerciseEditModal controller = loader.getController();
+            controller.setParentController(this);
+            controller.setExerciseToEdit(table.getSelectionModel().getSelectedItem());
+
+            modal.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

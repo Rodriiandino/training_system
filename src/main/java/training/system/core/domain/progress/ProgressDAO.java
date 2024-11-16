@@ -57,7 +57,7 @@ public class ProgressDAO implements GenericDao<Progress, Long>, IProgress {
     public Progress update(Progress entity) throws DAOException {
         String sql = """
                 UPDATE training_system.progress
-                SET progress_date = ?, repetitions = ?, weight = ?, time = ?
+                SET progress_date = ?, repetitions = ?, weight = ?, time = ?, exercise_id = ?
                 WHERE id = ?
                 """;
 
@@ -68,7 +68,8 @@ public class ProgressDAO implements GenericDao<Progress, Long>, IProgress {
             stmt.setInt(2, entity.getRepetitions());
             stmt.setInt(3, entity.getWeight());
             stmt.setInt(4, entity.getTime());
-            stmt.setLong(5, entity.getId());
+            stmt.setLong(5, entity.getExercise().getId());
+            stmt.setLong(6, entity.getId());
             stmt.executeUpdate();
 
             connection.commit();

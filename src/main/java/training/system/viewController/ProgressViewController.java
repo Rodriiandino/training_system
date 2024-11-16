@@ -47,6 +47,7 @@ public class ProgressViewController implements Initializable, IView, IViewContro
         sessionManager = SessionManager.getInstance();
         currentUser = sessionManager.getCurrentUser();
         user_name.setText(currentUser.getName());
+        btn_edit.setDisable(true);
 
         setupListeners();
     }
@@ -55,6 +56,10 @@ public class ProgressViewController implements Initializable, IView, IViewContro
         progressController = new ProgressController();
         createColumn();
         list();
+        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            btn_edit.setDisable(newSelection == null);
+        });
+
         btn_create.setOnAction(e -> create());
         btn_edit.setOnAction(e -> edit());
 
@@ -144,6 +149,15 @@ public class ProgressViewController implements Initializable, IView, IViewContro
         }
     }
 
+    public void edit(Progress progress) {
+        try {
+            progressController.update(progress);
+            list();
+        } catch (ControllerException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void showCreateModal() {
         try {
@@ -168,7 +182,26 @@ public class ProgressViewController implements Initializable, IView, IViewContro
     }
     @Override
     public void showEditModal() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/progress-edit-modal.fxml"));
+            Parent root = loader.load();
 
+            Scene modalScene = new Scene(root);
+
+            Stage modal = new Stage();
+            modal.initModality(Modality.APPLICATION_MODAL);
+            modal.setTitle("Editar Elemento");
+            modal.setScene(modalScene);
+            modal.setResizable(false);
+
+            ProgressEditModal controller = loader.getController();
+            controller.setParentController(this);
+            controller.setProgressToEdit(table.getSelectionModel().getSelectedItem());
+
+            modal.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -48,6 +48,7 @@ public class NotesViewController implements Initializable, IView, IViewControlle
         sessionManager = SessionManager.getInstance();
         currentUser = sessionManager.getCurrentUser();
         user_name.setText(currentUser.getName());
+        btn_edit.setDisable(true);
 
         setupListeners();
     }
@@ -56,6 +57,10 @@ public class NotesViewController implements Initializable, IView, IViewControlle
         noteController = new NoteController();
         createColumn();
         list();
+        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            btn_edit.setDisable(newSelection == null);
+        });
+
         btn_create.setOnAction(e -> create());
         btn_edit.setOnAction(e -> edit());
 
@@ -127,6 +132,15 @@ public class NotesViewController implements Initializable, IView, IViewControlle
         }
     }
 
+    public void edit(Note note) {
+        try {
+            noteController.update(note);
+            list();
+        } catch (ControllerException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void showCreateModal() {
         try {
@@ -152,7 +166,26 @@ public class NotesViewController implements Initializable, IView, IViewControlle
 
     @Override
     public void showEditModal() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/note-edit-modal.fxml"));
+            Parent root = loader.load();
 
+            Scene modalScene = new Scene(root);
+
+            Stage modal = new Stage();
+            modal.initModality(Modality.APPLICATION_MODAL);
+            modal.setTitle("Editar Elemento");
+            modal.setScene(modalScene);
+            modal.setResizable(false);
+
+            NoteEditModal controller = loader.getController();
+            controller.setParentController(this);
+            controller.setNoteToEdit(table.getSelectionModel().getSelectedItem());
+
+            modal.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

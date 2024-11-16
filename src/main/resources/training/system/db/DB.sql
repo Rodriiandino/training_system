@@ -432,6 +432,15 @@ FROM training_system.person p
          LEFT JOIN training_system.gym gw ON gwu.gym_id = gw.id
 WHERE p.id = ?;
 
+SELECT u.id AS client_id, u.gym_train_id AS client_gym_id
+FROM training_system.person p
+         LEFT JOIN training_system.user u ON p.id = u.id
+WHERE p.email = ?;
+
+SELECT p.id AS trainer_id, g.gym_id AS trainer_gym_id
+FROM training_system.person p
+         LEFT JOIN training_system.gym_worker_user g ON p.id = g.user_id
+WHERE p.email = ?;
 
 -- Eliminar datos de prueba
 -- Eliminar notas
