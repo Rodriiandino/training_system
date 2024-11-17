@@ -7,8 +7,8 @@ import training.system.core.domain.user.UserController;
 import training.system.core.exception.ControllerException;
 import training.system.utils.ScreenTransitionUtil;
 import training.system.utils.SessionManager;
-import training.system.utils.Validators;
 import training.system.utils.Validator;
+import training.system.utils.Validators;
 import training.system.viewController.interfaces.IView;
 
 import java.net.URL;
@@ -39,18 +39,12 @@ public class LoginViewController implements Initializable, Validator, IView {
 
         userController = new UserController();
 
-        btn_in.setOnAction(event -> {
-            try {
-                login();
-            } catch (ControllerException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        btn_in.setOnAction(e -> login());
 
-        btn_register.setOnAction(event -> ScreenTransitionUtil.changeScreen(this, "/training/system/view/registration-view.fxml", btn_register));
+        btn_register.setOnAction(e -> register());
     }
 
-    private void login() throws ControllerException {
+    private void login() {
         String email = input_email.getText().toLowerCase();
         String password = input_password.getText();
 
@@ -77,6 +71,10 @@ public class LoginViewController implements Initializable, Validator, IView {
         }
     }
 
+    private void register() {
+        ScreenTransitionUtil.changeScreen(this, "/training/system/view/registration-view.fxml", btn_register);
+    }
+
     @Override
     public void validateFields() {
         Validators.userLoginValidator(input_email, input_password, text_error, btn_in);
@@ -89,3 +87,4 @@ public class LoginViewController implements Initializable, Validator, IView {
         textFields.forEach(textField -> textField.textProperty().addListener((observable, oldValue, newValue) -> validateFields()));
     }
 }
+

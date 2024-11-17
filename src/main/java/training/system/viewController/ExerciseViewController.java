@@ -129,7 +129,6 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
         table.getColumns().addAll(idColumn, nameColumn, descriptionColumn, explanationColumn, videoUrlColumn, isPredefinedColumn, categoriesColumn, trainerColumn);
     }
 
-
     private void configureCategoriesColumn(TableColumn<Exercise, Set<Category>> column) {
         column.setStyle("-fx-alignment: CENTER;");
         column.setMinWidth(150);

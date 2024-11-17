@@ -36,9 +36,7 @@ public class RegistrationViewController implements Initializable, Validator {
         addValidators();
         btn_register.setOnAction(e -> register());
 
-        btn_back.setOnAction(e -> {
-            ScreenTransitionUtil.changeScreen(this, "/training/system/view/login-view.fxml", btn_back);
-        });
+        btn_back.setOnAction(e -> toLogin());
     }
 
     private void register() {
@@ -69,6 +67,10 @@ public class RegistrationViewController implements Initializable, Validator {
         }
 
         ScreenTransitionUtil.changeScreen(this, "/training/system/view/login-view.fxml", btn_register);
+    }
+
+    private void toLogin() {
+        ScreenTransitionUtil.changeScreen(this, "/training/system/view/login-view.fxml", btn_back);
     }
 
     @Override
