@@ -10,7 +10,7 @@ import training.system.utils.SessionManager;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class MainViewController implements Initializable {
+public class MainViewController implements Initializable, IView {
     public Text user_name;
     public Button exercise_section;
     public Button routine_section;
@@ -29,7 +29,8 @@ public class MainViewController implements Initializable {
     }
 
 
-    private void setupListeners() {
+    @Override
+    public void setupListeners() {
         user_section.setOnAction(e -> {
             ScreenTransitionUtil.changeScreen(this, "/training/system/view/profile-view.fxml", user_section);
         });

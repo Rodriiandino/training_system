@@ -178,7 +178,7 @@ public class UserDAO implements GenericDao<User, Long>, IUser {
                     }
 
                     long workerGymId = rs.getLong("worker_gym_id");
-                    if (workerGymId != 0) {
+                    if (workerGymId != 0 && workerGyms.stream().noneMatch(gym -> gym.getId() == workerGymId)) {
                         Gym workerGym = new Gym(
                                 workerGymId,
                                 rs.getString("worker_gym_name"),
@@ -294,7 +294,7 @@ public class UserDAO implements GenericDao<User, Long>, IUser {
                     }
 
                     long workerGymId = rs.getLong("worker_gym_id");
-                    if (workerGymId != 0) {
+                    if (workerGymId != 0 && workerGyms.stream().noneMatch(gym -> gym.getId() == workerGymId)) {
                         Gym workerGym = new Gym(
                                 workerGymId,
                                 rs.getString("worker_gym_name"),
@@ -359,5 +359,39 @@ public class UserDAO implements GenericDao<User, Long>, IUser {
         }
 
         return isEmailAlreadyRegistered;
+    }
+
+    @Override
+    public Set<User> listClients(User trainer) throws DAOException {
+        String sql = """ 
+                SELECT c.id AS client_id, c.first_name AS client_first_name, c.last_name AS client_last_name, c.email AS client_email
+                FROM training_system.user u
+                    JOIN training_system.person c ON u.id = c.id
+                    JOIN training_system.trainer_Client tc ON u.id = tc.client_id
+                    JOIN training_system.person t ON tc.trainer_id = t.id
+                WHERE tc.trainer_id = ?""";
+
+        Set<User> clients = new HashSet<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, trainer.getId());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    User client = new User(
+                            rs.getLong("client_id"),
+                            rs.getString("client_first_name"),
+                            rs.getString("client_last_name"),
+                            rs.getString("client_email")
+                    );
+
+                    clients.add(client);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("error al listar los clientes", e);
+        }
+
+        return clients;
     }
 }

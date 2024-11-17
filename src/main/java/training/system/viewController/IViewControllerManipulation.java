@@ -1,10 +1,12 @@
 package training.system.viewController;
 
-public interface IViewControllerManipulation {
+public interface IViewControllerManipulation<T> {
     void createColumn();
-    void edit();
-    void create();
+    void edit(T entity);
+    void create(T entity);
     void list();
     void showCreateModal();
     void showEditModal();
+    void showCreateForClientModal();
+    void createForClient(T entity);
 }

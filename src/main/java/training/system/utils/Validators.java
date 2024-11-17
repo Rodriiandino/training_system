@@ -3,6 +3,7 @@ package training.system.utils;
 
 import javafx.scene.control.*;
 import training.system.core.domain.exercise.Exercise;
+import training.system.core.domain.user.User;
 
 public class Validators {
 
@@ -117,6 +118,15 @@ public class Validators {
         boolean allFieldsValid = isDateSelected && isExerciseSelected;
 
         btn.setDisable(!allFieldsValid);
+    }
+
+    public static void listValidator(ListView<User> list_view, Label text_error, Button btn) {
+        boolean isExerciseSelected = list_view.getSelectionModel().getSelectedItem() != null;
+
+        if (!isExerciseSelected) text_error.setText("Seleccione a un cliente");
+        else text_error.setText("");
+
+        btn.setDisable(!isExerciseSelected);
     }
 
     public static void routineValidator(TextField input_name, ListView<Exercise> list_view, Label text_error, Button btn) {

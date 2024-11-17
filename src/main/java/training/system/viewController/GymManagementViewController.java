@@ -1,5 +1,6 @@
 package training.system.viewController;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
@@ -14,8 +15,9 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public class GymManagementViewController implements Initializable, Validator {
+public class GymManagementViewController implements Initializable, Validator, IView {
     public Text user_name;
     public Button exercise_section;
     public Button routine_section;
@@ -32,7 +34,7 @@ public class GymManagementViewController implements Initializable, Validator {
     public ListView<User> list_admin;
     public TextField input_new_admin;
     public Button btn_new_admin;
-    public TableView table_trainer_client;
+    public TableView<User> table_trainer_client;
     public TextField input_trainer_attach;
     public Button btn_attach;
     public TextField input_client_attach;
@@ -54,7 +56,8 @@ public class GymManagementViewController implements Initializable, Validator {
         setupListeners();
     }
 
-    private void setupListeners() {
+    @Override
+    public void setupListeners() {
         addValidators();
         user_section.setOnAction(e -> {
             ScreenTransitionUtil.changeScreen(this, "/training/system/view/profile-view.fxml", user_section);
@@ -83,6 +86,7 @@ public class GymManagementViewController implements Initializable, Validator {
         listTrainers();
         listClients();
         listAdmins();
+        listTrainerClients();
 
         btn_new_trainer.setOnAction(e -> addTrainer());
         btn_new_client.setOnAction(e -> addClient());
@@ -171,6 +175,48 @@ public class GymManagementViewController implements Initializable, Validator {
                     }
                 }
             });
+        }
+    }
+
+    private void listTrainerClients() {
+        Set<User> trainerClients = new HashSet<>();
+
+        try {
+            trainerClients = gymController.listAttachedTrainersToUser(currentUser.getGymManager().getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (trainerClients != null && !trainerClients.isEmpty()) {
+            table_trainer_client.getItems().clear();
+
+            TableColumn<User, String> clientColumn = new TableColumn<>("Cliente");
+            clientColumn.setCellValueFactory(data -> {
+                String fullName = data.getValue().getName() + " " + data.getValue().getLastName();
+                return new SimpleStringProperty(fullName);
+            });
+
+            TableColumn<User, String> trainersColumn = new TableColumn<>("Entrenador(es)");
+            trainersColumn.setCellValueFactory(data -> {
+                Set<User> trainers = data.getValue().getTrainers();
+                if (trainers == null || trainers.isEmpty()) {
+                    return new SimpleStringProperty("Sin entrenador");
+                }
+
+                String trainersList = trainers.stream().map(trainer -> trainer.getName() + " " + trainer.getLastName()).collect(Collectors.joining(", "));
+
+                return new SimpleStringProperty(trainersList);
+            });
+
+
+            clientColumn.prefWidthProperty().bind(table_trainer_client.widthProperty().multiply(0.4));
+            trainersColumn.prefWidthProperty().bind(table_trainer_client.widthProperty().multiply(0.6));
+
+
+            table_trainer_client.getColumns().clear();
+            table_trainer_client.getColumns().addAll(clientColumn, trainersColumn);
+
+            table_trainer_client.getItems().addAll(trainerClients);
         }
     }
 

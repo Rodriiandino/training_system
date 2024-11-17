@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import training.system.core.domain.exercise.Exercise;
 import training.system.core.domain.progress.Progress;
 import training.system.core.domain.progress.ProgressController;
+import training.system.core.domain.user.RoleEnum;
 import training.system.core.domain.user.User;
 import training.system.core.exception.ControllerException;
 import training.system.utils.ConfigureColumn;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-public class ProgressViewController implements Initializable, IView, IViewControllerManipulation {
+public class ProgressViewController implements Initializable, IView, IViewControllerManipulation<Progress> {
     public Text user_name;
     public Button exercise_section;
     public Button routine_section;
@@ -38,6 +39,7 @@ public class ProgressViewController implements Initializable, IView, IViewContro
     public Button btn_edit;
     public Button btn_create;
     public Button btn_out;
+    public Button btn_create_client;
     private SessionManager sessionManager;
     ProgressController progressController;
     User currentUser;
@@ -60,9 +62,13 @@ public class ProgressViewController implements Initializable, IView, IViewContro
             btn_edit.setDisable(newSelection == null);
         });
 
-        btn_create.setOnAction(e -> create());
-        btn_edit.setOnAction(e -> edit());
+        btn_create.setOnAction(e -> showCreateModal());
+        btn_edit.setOnAction(e -> showEditModal());
+        btn_create_client.setOnAction(e -> showCreateForClientModal());
 
+        if (currentUser.getRoles().stream().anyMatch(role -> role.getRole().name().equals(RoleEnum.ROLE_TRAINER.name()))) {
+            btn_create_client.setVisible(true);
+        }
 
         user_section.setOnAction(e -> {
             ScreenTransitionUtil.changeScreen(this, "/training/system/view/profile-view.fxml", user_section);
@@ -91,6 +97,7 @@ public class ProgressViewController implements Initializable, IView, IViewContro
 
     @Override
     public void createColumn() {
+        TableColumn<Progress, Integer> idColumn = new TableColumn<>("ID");
         TableColumn<Progress, Date> dateColumn = new TableColumn<>("Fecha de Progreso");
         TableColumn<Progress, Integer> repetitionsColumn = new TableColumn<>("Repeticiones");
         TableColumn<Progress, Integer> weightColumn = new TableColumn<>("Peso");
@@ -98,6 +105,7 @@ public class ProgressViewController implements Initializable, IView, IViewContro
         TableColumn<Progress, User> trainerColumn = new TableColumn<>("Entrenador");
         TableColumn<Progress, Exercise> exerciseColumn = new TableColumn<>("Ejercicio");
 
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("progressDate"));
         repetitionsColumn.setCellValueFactory(new PropertyValueFactory<>("repetitions"));
         weightColumn.setCellValueFactory(new PropertyValueFactory<>("weight"));
@@ -124,23 +132,12 @@ public class ProgressViewController implements Initializable, IView, IViewContro
         ConfigureColumn.configureDateColumn(dateColumn);
         List.of(repetitionsColumn, weightColumn, timeColumn).forEach(ConfigureColumn::configureIntegerColumn);
 
-        table.getColumns().addAll(dateColumn, repetitionsColumn, weightColumn, timeColumn, trainerColumn, exerciseColumn);
+        table.getColumns().addAll(idColumn, dateColumn, repetitionsColumn, weightColumn, timeColumn, trainerColumn, exerciseColumn);
     }
 
 
     @Override
-    public void edit() {
-        showEditModal();
-    }
-
-    @Override
-    public void create() {
-        showCreateModal();
-    }
-
-    public void create(Integer repe, Integer weight, Integer time, Date date, Exercise exercise) {
-        Progress progress = new Progress(date, repe, weight, time, currentUser, exercise);
-
+    public void create(Progress progress) {
         try {
             progressController.create(progress);
             list();
@@ -149,6 +146,7 @@ public class ProgressViewController implements Initializable, IView, IViewContro
         }
     }
 
+    @Override
     public void edit(Progress progress) {
         try {
             progressController.update(progress);
@@ -159,20 +157,30 @@ public class ProgressViewController implements Initializable, IView, IViewContro
     }
 
     @Override
+    public void createForClient(Progress entity) {
+        try {
+            progressController.createProgressForClient(entity);
+            list();
+        } catch (ControllerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void showCreateModal() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/progress-create-modal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/progress-modal.fxml"));
             Parent root = loader.load();
 
             Scene modalScene = new Scene(root);
 
             Stage modal = new Stage();
             modal.initModality(Modality.APPLICATION_MODAL);
-            modal.setTitle("Crear Elemento");
+            modal.setTitle("Crear Progreso");
             modal.setScene(modalScene);
             modal.setResizable(false);
 
-            ProgressCreateModal controller = loader.getController();
+            ProgressModal controller = loader.getController();
             controller.setParentController(this);
 
             modal.showAndWait();
@@ -183,20 +191,44 @@ public class ProgressViewController implements Initializable, IView, IViewContro
     @Override
     public void showEditModal() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/progress-edit-modal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/progress-modal.fxml"));
             Parent root = loader.load();
 
             Scene modalScene = new Scene(root);
 
             Stage modal = new Stage();
             modal.initModality(Modality.APPLICATION_MODAL);
-            modal.setTitle("Editar Elemento");
+            modal.setTitle("Editar Progreso");
             modal.setScene(modalScene);
             modal.setResizable(false);
 
-            ProgressEditModal controller = loader.getController();
+            ProgressModal controller = loader.getController();
             controller.setParentController(this);
             controller.setProgressToEdit(table.getSelectionModel().getSelectedItem());
+
+            modal.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void showCreateForClientModal() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/progress-modal.fxml"));
+            Parent root = loader.load();
+
+            Scene modalScene = new Scene(root);
+
+            Stage modal = new Stage();
+            modal.initModality(Modality.APPLICATION_MODAL);
+            modal.setTitle("Crear Progreso para cliente");
+            modal.setScene(modalScene);
+            modal.setResizable(false);
+
+            ProgressModal controller = loader.getController();
+            controller.setParentController(this);
+            controller.setCreateForClient(true);
 
             modal.showAndWait();
         } catch (IOException e) {
@@ -217,6 +249,4 @@ public class ProgressViewController implements Initializable, IView, IViewContro
 
         table.setItems(progresses);
     }
-
-
 }

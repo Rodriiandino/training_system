@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class LoginViewController implements Initializable, Validator {
+public class LoginViewController implements Initializable, Validator, IView {
     public TextField input_email;
     public PasswordField input_password;
     public Button btn_in;
@@ -31,7 +31,8 @@ public class LoginViewController implements Initializable, Validator {
         setupListeners();
     }
 
-    private void setupListeners() {
+    @Override
+    public void setupListeners() {
         validateFields();
         addValidators();
 

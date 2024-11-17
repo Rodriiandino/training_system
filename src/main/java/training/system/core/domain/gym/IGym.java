@@ -24,4 +24,6 @@ public interface IGym {
     Set<User> listGymManagers(Long id) throws Exception;
 
     boolean attachTrainerToUser(Long gymId, String trainerEmail, String userEmail) throws Exception;
+
+    Set<User> listAttachedTrainersToUser(Long gymId) throws Exception;
 }

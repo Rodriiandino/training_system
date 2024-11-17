@@ -103,4 +103,13 @@ public class UserController implements GenericController<User, Long>, IUser {
             throw new ControllerException("Error al verificar si el correo electrónico ya está registrado", e);
         }
     }
+
+    @Override
+    public Set<User> listClients(User trainer) throws ControllerException {
+        try {
+            return userDAO.listClients(trainer);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al listar los clientes", e);
+        }
+    }
 }

@@ -11,7 +11,7 @@ import training.system.utils.Validators;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class GymCreateModal implements Initializable, IViewModal, Validator {
+public class GymCreateModal implements Initializable, Validator, IView {
     public TextField input_name;
     public TextField input_address;
     public Button btn_register;
@@ -23,13 +23,13 @@ public class GymCreateModal implements Initializable, IViewModal, Validator {
         setupListeners();
     }
 
-    private void setupListeners() {
+    @Override
+    public void setupListeners() {
         validateFields();
         addValidators();
         btn_register.setOnAction(e -> create());
     }
 
-    @Override
     public <T> void setParentController(T controller) {
         this.profileViewController = (ProfileViewController) controller;
     }

@@ -26,7 +26,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-public class ProfileViewController implements Initializable, Validator {
+public class ProfileViewController implements Initializable, Validator, IView {
     public Text user_name;
     public Button exercise_section;
     public Button routine_section;
@@ -68,7 +68,8 @@ public class ProfileViewController implements Initializable, Validator {
         setupListeners();
     }
 
-    private void setupListeners() {
+    @Override
+    public void setupListeners() {
         addValidators();
         user_name.setText(currentUser.getName());
         input_name.setText(currentUser.getName());

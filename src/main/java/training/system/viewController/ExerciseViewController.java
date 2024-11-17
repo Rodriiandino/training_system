@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import training.system.core.domain.category.Category;
 import training.system.core.domain.exercise.Exercise;
 import training.system.core.domain.exercise.ExerciseController;
-import training.system.core.domain.note.Note;
+import training.system.core.domain.user.RoleEnum;
 import training.system.core.domain.user.User;
 import training.system.core.exception.ControllerException;
 import training.system.utils.ConfigureColumn;
@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ExerciseViewController implements Initializable, IView, IViewControllerManipulation {
+public class ExerciseViewController implements Initializable, IView, IViewControllerManipulation<Exercise> {
     public Text user_name;
     public Button exercise_section;
     public Button routine_section;
@@ -40,6 +40,7 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
     public Button btn_create;
     public Button btn_edit;
     public Button btn_out;
+    public Button btn_create_client;
     private SessionManager sessionManager;
     private ExerciseController exerciseController;
     User currentUser;
@@ -63,8 +64,13 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
             btn_edit.setDisable(newSelection == null);
         });
 
-        btn_create.setOnAction(e -> create());
-        btn_edit.setOnAction(e -> edit());
+        btn_create.setOnAction(e -> showCreateModal());
+        btn_edit.setOnAction(e -> showEditModal());
+        btn_create_client.setOnAction(e -> showCreateForClientModal());
+
+        if (currentUser.getRoles().stream().anyMatch(role -> role.getRole().name().equals(RoleEnum.ROLE_TRAINER.name()))) {
+            btn_create_client.setVisible(true);
+        }
 
         user_section.setOnAction(e -> {
             ScreenTransitionUtil.changeScreen(this, "/training/system/view/profile-view.fxml", user_section);
@@ -144,18 +150,7 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
     }
 
     @Override
-    public void edit() {
-        showEditModal();
-    }
-
-    @Override
-    public void create() {
-        showCreateModal();
-    }
-
-    public void create(String name, String description, String explanation, String videoUrl, Set<Category> categories) {
-        Exercise exercise = new Exercise(name, description, explanation, videoUrl, false, categories, currentUser);
-
+    public void create(Exercise exercise) {
         try {
             exerciseController.create(exercise);
             list();
@@ -164,6 +159,7 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
         }
     }
 
+    @Override
     public void edit(Exercise exercise) {
         try {
             exerciseController.update(exercise);
@@ -174,20 +170,30 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
     }
 
     @Override
+    public void createForClient(Exercise entity) {
+        try {
+            exerciseController.createExerciseForClient(entity);
+            list();
+        } catch (ControllerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void showCreateModal() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/exercise-create-modal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/exercise-modal.fxml"));
             Parent root = loader.load();
 
             Scene modalScene = new Scene(root);
 
             Stage modal = new Stage();
             modal.initModality(Modality.APPLICATION_MODAL);
-            modal.setTitle("Crear Elemento");
+            modal.setTitle("Crear Ejercicio");
             modal.setScene(modalScene);
             modal.setResizable(false);
 
-            ExerciseCreateModal controller = loader.getController();
+            ExerciseModal controller = loader.getController();
             controller.setParentController(this);
 
             modal.showAndWait();
@@ -195,23 +201,48 @@ public class ExerciseViewController implements Initializable, IView, IViewContro
             e.printStackTrace();
         }
     }
+
     @Override
     public void showEditModal() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/exercise-edit-modal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/exercise-modal.fxml"));
             Parent root = loader.load();
 
             Scene modalScene = new Scene(root);
 
             Stage modal = new Stage();
             modal.initModality(Modality.APPLICATION_MODAL);
-            modal.setTitle("Editar Elemento");
+            modal.setTitle("Editar Ejercicio");
             modal.setScene(modalScene);
             modal.setResizable(false);
 
-            ExerciseEditModal controller = loader.getController();
+            ExerciseModal controller = loader.getController();
             controller.setParentController(this);
             controller.setExerciseToEdit(table.getSelectionModel().getSelectedItem());
+
+            modal.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void showCreateForClientModal() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/exercise-modal.fxml"));
+            Parent root = loader.load();
+
+            Scene modalScene = new Scene(root);
+
+            Stage modal = new Stage();
+            modal.initModality(Modality.APPLICATION_MODAL);
+            modal.setTitle("Crear Ejercicio para cliente");
+            modal.setScene(modalScene);
+            modal.setResizable(false);
+
+            ExerciseModal controller = loader.getController();
+            controller.setParentController(this);
+            controller.setCreateForClient(true);
 
             modal.showAndWait();
         } catch (IOException e) {

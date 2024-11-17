@@ -6,7 +6,9 @@ import training.system.core.exception.DAOException;
 import training.system.core.generic.GenericDao;
 
 import java.sql.*;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class GymDAO implements GenericDao<Gym, Long>, IGym {
@@ -448,5 +450,64 @@ public class GymDAO implements GenericDao<Gym, Long>, IGym {
         } catch (SQLException e) {
             throw new DAOException("Error al adjuntar entrenador al usuario", e);
         }
+    }
+
+    @Override
+    public Set<User> listAttachedTrainersToUser(Long gymId) throws DAOException {
+        Map<Long, User> clientsMap = new HashMap<>(); // Usar un Map para mantener usuarios únicos
+
+        String sql = """
+            SELECT 
+                c.id as client_id, 
+                c.first_name as client_first_name, 
+                c.last_name as client_last_name, 
+                c.email as client_email,
+                t.id as trainer_id, 
+                t.first_name as trainer_first_name, 
+                t.last_name as trainer_last_name, 
+                t.email as trainer_email
+            FROM training_system.user u
+                JOIN training_system.person c ON u.id = c.id
+                LEFT JOIN training_system.trainer_client tc ON u.id = tc.client_id
+                LEFT JOIN training_system.person t ON tc.trainer_id = t.id
+            WHERE u.gym_train_id = ?
+            """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, gymId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Long clientId = rs.getLong("client_id");
+
+                    User client = clientsMap.get(clientId);
+
+                    if (client == null) {
+                        client = new User(
+                                clientId,
+                                rs.getString("client_first_name"),
+                                rs.getString("client_last_name"),
+                                rs.getString("client_email")
+                        );
+                        clientsMap.put(clientId, client);
+                    }
+
+                    Long trainerId = rs.getLong("trainer_id");
+                    if (!rs.wasNull()) {
+                        User trainer = new User(
+                                trainerId,
+                                rs.getString("trainer_first_name"),
+                                rs.getString("trainer_last_name"),
+                                rs.getString("trainer_email")
+                        );
+                        client.addTrainer(trainer);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error al listar los entrenadores adjuntos a los clientes del gimnasio", e);
+        }
+
+        return new HashSet<>(clientsMap.values());
     }
 }

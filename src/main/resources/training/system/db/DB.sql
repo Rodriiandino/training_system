@@ -283,6 +283,15 @@ SELECT e.name, e.description
     FROM Exercise e
 WHERE e.is_predefined = TRUE;
 
+-- Consulta para obtener los clientes del entrenador
+SELECT c.id AS client_id, c.first_name AS client_first_name, c.last_name AS client_last_name, c.email AS client_email,
+    t.id AS trainer_id, t.first_name AS trainer_first_name, t.last_name AS trainer_last_name, t.email AS trainer_email
+FROM User u
+    JOIN Person c ON u.id = c.id
+    JOIN Trainer_Client tc ON u.id = tc.client_id
+    JOIN Person t ON tc.trainer_id = t.id
+WHERE tc.trainer_id = 2;
+
 SELECT e.id, e.name, e.description, e.explanation, e.demo_video_url, c.id, c.name, c.description
 FROM exercise e
     left JOIN exercise_category ec ON e.id = ec.exercise_id
@@ -441,6 +450,21 @@ SELECT p.id AS trainer_id, g.gym_id AS trainer_gym_id
 FROM training_system.person p
          LEFT JOIN training_system.gym_worker_user g ON p.id = g.user_id
 WHERE p.email = ?;
+
+SELECT
+    c.id as client_id,
+    c.first_name as client_first_name,
+    c.last_name as client_last_name,
+    c.email as client_email,
+    t.id as trainer_id,
+    t.first_name as trainer_first_name,
+    t.last_name as trainer_last_name,
+    t.email as trainer_email
+FROM training_system.user u
+         JOIN training_system.person c ON u.id = c.id
+         LEFT JOIN training_system.trainer_client tc ON u.id = tc.client_id
+         LEFT JOIN training_system.person t ON tc.trainer_id = t.id
+WHERE u.gym_train_id = ?;
 
 -- Eliminar datos de prueba
 -- Eliminar notas

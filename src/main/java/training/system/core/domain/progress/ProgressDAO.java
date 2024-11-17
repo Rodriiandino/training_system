@@ -202,7 +202,7 @@ public class ProgressDAO implements GenericDao<Progress, Long>, IProgress {
             stmt.setInt(4, progress.getTime());
             stmt.setLong(5, progress.getUser().getId());
             stmt.setLong(6, progress.getTrainer().getId());
-            stmt.setLong(6, progress.getExercise().getId());
+            stmt.setLong(7, progress.getExercise().getId());
             stmt.executeUpdate();
 
             try (ResultSet rs = stmt.getGeneratedKeys()) {

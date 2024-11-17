@@ -158,4 +158,13 @@ public class GymController implements GenericController<Gym, Long>, IGym {
             throw new ControllerException("Error al adjuntar entrenador al usuario", e);
         }
     }
+
+    @Override
+    public Set<User> listAttachedTrainersToUser(Long gymId) throws ControllerException {
+        try {
+            return gymDAO.listAttachedTrainersToUser(gymId);
+        } catch (DAOException e) {
+            throw new ControllerException("Error al listar los entrenadores adjuntos al usuario", e);
+        }
+    }
 }

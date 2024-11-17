@@ -15,6 +15,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import training.system.core.domain.note.Note;
 import training.system.core.domain.note.NoteController;
+import training.system.core.domain.user.RoleEnum;
 import training.system.core.domain.user.User;
 import training.system.core.exception.ControllerException;
 import training.system.utils.ConfigureColumn;
@@ -28,7 +29,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-public class NotesViewController implements Initializable, IView, IViewControllerManipulation {
+public class NotesViewController implements Initializable, IView, IViewControllerManipulation<Note> {
     public Text user_name;
     public Button exercise_section;
     public Button routine_section;
@@ -39,6 +40,7 @@ public class NotesViewController implements Initializable, IView, IViewControlle
     public Button btn_create;
     public Button btn_edit;
     public Button btn_out;
+    public Button btn_create_client;
     private SessionManager sessionManager;
     private NoteController noteController;
     private User currentUser;
@@ -61,9 +63,13 @@ public class NotesViewController implements Initializable, IView, IViewControlle
             btn_edit.setDisable(newSelection == null);
         });
 
-        btn_create.setOnAction(e -> create());
-        btn_edit.setOnAction(e -> edit());
+        btn_create.setOnAction(e -> showCreateModal());
+        btn_edit.setOnAction(e -> showEditModal());
+        btn_create_client.setOnAction(e -> showCreateForClientModal());
 
+        if (currentUser.getRoles().stream().anyMatch(role -> role.getRole().name().equals(RoleEnum.ROLE_TRAINER.name()))) {
+            btn_create_client.setVisible(true);
+        }
 
         user_section.setOnAction(e -> {
             ScreenTransitionUtil.changeScreen(this, "/training/system/view/profile-view.fxml", user_section);
@@ -92,12 +98,14 @@ public class NotesViewController implements Initializable, IView, IViewControlle
 
     @Override
     public void createColumn() {
+        TableColumn<Note, Integer> idColumn = new TableColumn<>("ID");
         TableColumn<Note, String> titleColumn = new TableColumn<>("Titulo");
         TableColumn<Note, String> contentColumn = new TableColumn<>("Contenido");
         TableColumn<Note, String> purposeColumn = new TableColumn<>("Proposito");
         TableColumn<Note, Date> dateColumn = new TableColumn<>("Fecha");
         TableColumn<Note, User> trainerColumn = new TableColumn<>("Entrenador");
 
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         contentColumn.setCellValueFactory(new PropertyValueFactory<>("content"));
         purposeColumn.setCellValueFactory(new PropertyValueFactory<>("purpose"));
@@ -108,22 +116,11 @@ public class NotesViewController implements Initializable, IView, IViewControlle
         ConfigureColumn.configureTrainerColumn(trainerColumn);
         ConfigureColumn.configureDateColumn(dateColumn);
 
-        table.getColumns().addAll(titleColumn, contentColumn, purposeColumn, dateColumn, trainerColumn);
+        table.getColumns().addAll(idColumn, titleColumn, contentColumn, purposeColumn, dateColumn, trainerColumn);
     }
 
     @Override
-    public void edit() {
-        showEditModal();
-    }
-
-    @Override
-    public void create() {
-        showCreateModal();
-    }
-
-    public void create(String title, String content, String purpose, Date date) {
-        Note note = new Note(title, content, purpose, date, currentUser);
-
+    public void create(Note note) {
         try {
             noteController.create(note);
             list();
@@ -132,6 +129,7 @@ public class NotesViewController implements Initializable, IView, IViewControlle
         }
     }
 
+    @Override
     public void edit(Note note) {
         try {
             noteController.update(note);
@@ -142,20 +140,30 @@ public class NotesViewController implements Initializable, IView, IViewControlle
     }
 
     @Override
+    public void createForClient(Note entity) {
+        try {
+            noteController.createNoteForClient(entity);
+            list();
+        } catch (ControllerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void showCreateModal() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/note-create-modal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/note-modal.fxml"));
             Parent root = loader.load();
 
             Scene modalScene = new Scene(root);
 
             Stage modal = new Stage();
             modal.initModality(Modality.APPLICATION_MODAL);
-            modal.setTitle("Crear Elemento");
+            modal.setTitle("Crear Nota");
             modal.setScene(modalScene);
             modal.setResizable(false);
 
-            NoteCreateModal controller = loader.getController();
+            NoteModal controller = loader.getController();
             controller.setParentController(this);
 
             modal.showAndWait();
@@ -167,20 +175,44 @@ public class NotesViewController implements Initializable, IView, IViewControlle
     @Override
     public void showEditModal() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/note-edit-modal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/note-modal.fxml"));
             Parent root = loader.load();
 
             Scene modalScene = new Scene(root);
 
             Stage modal = new Stage();
             modal.initModality(Modality.APPLICATION_MODAL);
-            modal.setTitle("Editar Elemento");
+            modal.setTitle("Editar Nota");
             modal.setScene(modalScene);
             modal.setResizable(false);
 
-            NoteEditModal controller = loader.getController();
+            NoteModal controller = loader.getController();
             controller.setParentController(this);
             controller.setNoteToEdit(table.getSelectionModel().getSelectedItem());
+
+            modal.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void showCreateForClientModal() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/training/system/view/note-modal.fxml"));
+            Parent root = loader.load();
+
+            Scene modalScene = new Scene(root);
+
+            Stage modal = new Stage();
+            modal.initModality(Modality.APPLICATION_MODAL);
+            modal.setTitle("Crear Nota para cliente");
+            modal.setScene(modalScene);
+            modal.setResizable(false);
+
+            NoteModal controller = loader.getController();
+            controller.setParentController(this);
+            controller.setCreateForClient(true);
 
             modal.showAndWait();
         } catch (IOException e) {
