@@ -132,7 +132,7 @@ public class NoteModal implements Initializable, IViewModal, Validator, IView {
     public void updateModalMode() {
         if (noteToEdit == null) {
             if (isCreateForClient) {
-                text_title.setText("Crear Rutina para Cliente");
+                text_title.setText("Crear Nota para Cliente");
                 configureContainer(trainer_container, true);
                 Set<User> clients = null;
 

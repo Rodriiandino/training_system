@@ -163,7 +163,7 @@ public class ProgressModal implements Initializable, IViewModal, Validator, IVie
     public void updateModalMode() {
         if (progressToEdit == null) {
             if (isCreateForClient) {
-                text_title.setText("Crear Rutina para Cliente");
+                text_title.setText("Crear Progreso para Cliente");
                 configureContainer(trainer_container, true);
                 Set<User> clients = null;
 

@@ -175,7 +175,7 @@ public class ExerciseModal implements Initializable, IViewModal, Validator, IVie
     public void updateModalMode() {
         if (exerciseToEdit == null) {
             if (isCreateForClient) {
-                text_title.setText("Crear Rutina para Cliente");
+                text_title.setText("Crear Ejercicio para Cliente");
                 configureContainer(trainer_container, true);
                 Set<User> clients = null;
 
