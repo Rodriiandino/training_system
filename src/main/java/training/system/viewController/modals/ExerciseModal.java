@@ -1,4 +1,4 @@
-package training.system.viewController;
+package training.system.viewController.modals;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -13,6 +13,9 @@ import training.system.core.domain.user.UserController;
 import training.system.utils.SessionManager;
 import training.system.utils.Validator;
 import training.system.utils.Validators;
+import training.system.viewController.ExerciseViewController;
+import training.system.viewController.interfaces.IView;
+import training.system.viewController.interfaces.IViewModal;
 
 import java.net.URL;
 import java.util.HashSet;

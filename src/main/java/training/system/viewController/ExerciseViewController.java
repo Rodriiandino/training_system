@@ -20,6 +20,9 @@ import training.system.core.exception.ControllerException;
 import training.system.utils.ConfigureColumn;
 import training.system.utils.ScreenTransitionUtil;
 import training.system.utils.SessionManager;
+import training.system.viewController.interfaces.IView;
+import training.system.viewController.interfaces.IViewControllerManipulation;
+import training.system.viewController.modals.ExerciseModal;
 
 import java.io.IOException;
 import java.net.URL;

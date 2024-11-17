@@ -17,4 +17,8 @@ module training.system {
     exports training.system.core.domain.progress;
     exports training.system.viewController;
     exports training.system.utils;
+    exports training.system.viewController.interfaces;
+    opens training.system.viewController.interfaces to javafx.fxml;
+    exports training.system.viewController.modals;
+    opens training.system.viewController.modals to javafx.fxml;
 }

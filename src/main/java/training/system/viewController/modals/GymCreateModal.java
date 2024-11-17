@@ -1,4 +1,4 @@
-package training.system.viewController;
+package training.system.viewController.modals;
 
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -7,6 +7,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import training.system.utils.Validator;
 import training.system.utils.Validators;
+import training.system.viewController.ProfileViewController;
+import training.system.viewController.interfaces.IView;
 
 import java.net.URL;
 import java.util.ResourceBundle;

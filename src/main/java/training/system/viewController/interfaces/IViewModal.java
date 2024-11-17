@@ -1,4 +1,4 @@
-package training.system.viewController;
+package training.system.viewController.interfaces;
 
 public interface IViewModal {
     void create();

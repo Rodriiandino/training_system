@@ -1,40 +1,46 @@
-package training.system.viewController;
+package training.system.viewController.modals;
 
-import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import training.system.core.domain.exercise.Exercise;
 import training.system.core.domain.exercise.ExerciseController;
-import training.system.core.domain.routine.Routine;
+import training.system.core.domain.progress.Progress;
 import training.system.core.domain.user.User;
 import training.system.core.domain.user.UserController;
 import training.system.utils.SessionManager;
 import training.system.utils.Validator;
 import training.system.utils.Validators;
+import training.system.viewController.ProgressViewController;
+import training.system.viewController.interfaces.IView;
+import training.system.viewController.interfaces.IViewModal;
 
 import java.net.URL;
-import java.util.HashSet;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-public class RoutineModal implements Initializable, IViewModal, Validator, IView {
+public class ProgressModal implements Initializable, IViewModal, Validator, IView {
 
-    public TextField input_name;
-    public TextField input_description;
-    public ListView<Exercise> list_view;
+    public TextField input_repe;
+    public TextField input_weight;
+    public TextField input_time;
+    public DatePicker input_date;
     public Button btn_register;
     public Label text_error;
+    public ListView<Exercise> list_view;
+    public ProgressViewController progressViewController;
     public Label text_title;
     public HBox trainer_container;
     public ListView<User> list_clients;
-    private RoutineViewController routineViewController;
     private SessionManager sessionManager;
     private ExerciseController exerciseController;
     private UserController userController;
     private User currentUser;
-    private Routine routineToEdit;
+    private Progress progressToEdit;
     private boolean isCreateForClient;
 
     @Override
@@ -52,7 +58,7 @@ public class RoutineModal implements Initializable, IViewModal, Validator, IView
         addValidators();
         exerciseController = new ExerciseController();
         btn_register.setOnAction(event -> {
-            if (routineToEdit == null) {
+            if (progressToEdit == null) {
                 if (isCreateForClient) {
                     createForClient();
                 } else {
@@ -63,8 +69,6 @@ public class RoutineModal implements Initializable, IViewModal, Validator, IView
             }
         });
 
-        list_view.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
         Set<Exercise> exercises = null;
 
         try {
@@ -72,7 +76,6 @@ public class RoutineModal implements Initializable, IViewModal, Validator, IView
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         if (exercises != null) {
             exercises.forEach(exercise -> list_view.getItems().add(exercise));
@@ -92,53 +95,60 @@ public class RoutineModal implements Initializable, IViewModal, Validator, IView
 
     @Override
     public <T> void setParentController(T controller) {
-        this.routineViewController = (RoutineViewController) controller;
+        this.progressViewController = (ProgressViewController) controller;
     }
 
     @Override
     public void create() {
-        String name = input_name.getText();
-        String description = input_description.getText().isEmpty() ? null : input_description.getText();
-        ObservableList<Exercise> selectedItems = list_view.getSelectionModel().getSelectedItems();
+        int repe = input_repe.getText().isEmpty() ? 0 : Integer.parseInt(input_repe.getText());
+        int weight = input_weight.getText().isEmpty() ? 0 : Integer.parseInt(input_weight.getText());
+        int time = input_time.getText().isEmpty() ? 0 : Integer.parseInt(input_time.getText());
+        LocalDate localDate = input_date.getValue();
+        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Exercise exercise = list_view.getSelectionModel().getSelectedItem();
 
-        Set<Exercise> exercises = new HashSet<>(selectedItems);
+        Progress progress = new Progress(date, repe, weight, time, currentUser, exercise);
 
-        Routine routine = new Routine(name, description, currentUser, exercises);
-        routineViewController.create(routine);
+        progressViewController.create(progress);
         ((Stage) btn_register.getScene().getWindow()).close();
     }
 
     @Override
     public void edit() {
-        String name = input_name.getText();
-        String description = input_description.getText().isEmpty() ? null : input_description.getText();
-        ObservableList<Exercise> selectedItems = list_view.getSelectionModel().getSelectedItems();
+        int inputRepe = input_repe.getText().isEmpty() ? 0 : Integer.parseInt(input_repe.getText());
+        int inputWeight = input_weight.getText().isEmpty() ? 0 : Integer.parseInt(input_weight.getText());
+        int inputTime = input_time.getText().isEmpty() ? 0 : Integer.parseInt(input_time.getText());
+        LocalDate localDate = input_date.getValue();
+        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Exercise exercise = list_view.getSelectionModel().getSelectedItem();
 
-        Set<Exercise> exercises = new HashSet<>(selectedItems);
+        Progress progress = new Progress(progressToEdit.getId(), date, inputRepe, inputWeight, inputTime, progressToEdit.getUser(), exercise);
 
-        Routine routine = new Routine(routineToEdit.getId(), name, description, currentUser, exercises);
-
-        routineViewController.edit(routine);
+        progressViewController.edit(progress);
         ((Stage) btn_register.getScene().getWindow()).close();
     }
 
     @Override
     public void createForClient() {
-        String name = input_name.getText();
-        String description = input_description.getText().isEmpty() ? null : input_description.getText();
-        ObservableList<Exercise> selectedItems = list_view.getSelectionModel().getSelectedItems();
+        int inputRepe = input_repe.getText().isEmpty() ? 0 : Integer.parseInt(input_repe.getText());
+        int inputWeight = input_weight.getText().isEmpty() ? 0 : Integer.parseInt(input_weight.getText());
+        int inputTime = input_time.getText().isEmpty() ? 0 : Integer.parseInt(input_time.getText());
+        LocalDate localDate = input_date.getValue();
+        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         User client = list_clients.getSelectionModel().getSelectedItem();
-        Set<Exercise> exercises = new HashSet<>(selectedItems);
+        Exercise exercise = list_view.getSelectionModel().getSelectedItem();
 
-        Routine routine = new Routine(name, description, client, currentUser, exercises);
-        routineViewController.createForClient(routine);
+        Progress progress = new Progress(date, inputRepe, inputWeight, inputTime, client, currentUser, exercise);
+
+        progressViewController.createForClient(progress);
         ((Stage) btn_register.getScene().getWindow()).close();
     }
 
-    public void setRoutineToEdit(Routine routine) {
-        this.routineToEdit = routine;
-        input_name.setText(routine.getName());
-        input_description.setText(routine.getDescription());
+    public void setProgressToEdit(Progress progress) {
+        this.progressToEdit = progress;
+        input_repe.setText(String.valueOf(progress.getRepetitions()));
+        input_weight.setText(String.valueOf(progress.getWeight()));
+        input_time.setText(String.valueOf(progress.getTime()));
 
         updateModalMode();
     }
@@ -151,7 +161,7 @@ public class RoutineModal implements Initializable, IViewModal, Validator, IView
 
     @Override
     public void updateModalMode() {
-        if (routineToEdit == null) {
+        if (progressToEdit == null) {
             if (isCreateForClient) {
                 text_title.setText("Crear Rutina para Cliente");
                 configureContainer(trainer_container, true);
@@ -187,7 +197,7 @@ public class RoutineModal implements Initializable, IViewModal, Validator, IView
 
     @Override
     public void validateFields() {
-        Validators.routineValidator(input_name, list_view, text_error, btn_register);
+        Validators.progressValidator(list_view, input_date, text_error, btn_register);
         if (isCreateForClient) {
             Validators.listValidator(list_clients, text_error, btn_register);
         }
@@ -195,7 +205,7 @@ public class RoutineModal implements Initializable, IViewModal, Validator, IView
 
     @Override
     public void addValidators() {
-        input_name.textProperty().addListener((observable, oldValue, newValue) -> validateFields());
+        input_date.valueProperty().addListener((observable, oldValue, newValue) -> validateFields());
         list_view.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> validateFields());
     }
 
@@ -204,3 +214,4 @@ public class RoutineModal implements Initializable, IViewModal, Validator, IView
         container.setManaged(visible);
     }
 }
+

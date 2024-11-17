@@ -6,6 +6,7 @@ import javafx.scene.text.Text;
 import training.system.core.domain.user.User;
 import training.system.utils.ScreenTransitionUtil;
 import training.system.utils.SessionManager;
+import training.system.viewController.interfaces.IView;
 
 import java.net.URL;
 import java.util.ResourceBundle;

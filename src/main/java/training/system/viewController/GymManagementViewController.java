@@ -10,6 +10,7 @@ import training.system.utils.ScreenTransitionUtil;
 import training.system.utils.SessionManager;
 import training.system.utils.Validator;
 import training.system.utils.Validators;
+import training.system.viewController.interfaces.IView;
 
 import java.net.URL;
 import java.util.HashSet;
@@ -112,7 +113,7 @@ public class GymManagementViewController implements Initializable, Validator, IV
                 @Override
                 protected void updateItem(User item, boolean empty) {
                     super.updateItem(item, empty);
-                    if (empty || item == null || item.getName() == null) {
+                    if (empty || item == null || item.getEmail() == null) {
                         setText(null);
                     } else {
                         setText(item.getEmail());
@@ -143,7 +144,7 @@ public class GymManagementViewController implements Initializable, Validator, IV
                     if (empty || item == null || item.getEmail() == null) {
                         setText(null);
                     } else {
-                        setText(item.getName());
+                        setText(item.getEmail());
                     }
                 }
             });
@@ -171,7 +172,7 @@ public class GymManagementViewController implements Initializable, Validator, IV
                     if (empty || item == null || item.getEmail() == null) {
                         setText(null);
                     } else {
-                        setText(item.getName());
+                        setText(item.getEmail());
                     }
                 }
             });
